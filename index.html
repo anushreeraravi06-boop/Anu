@@ -3,108 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SHE SHIELD – SAFE HER</title>
+<title>SHE SHIELD – Elite 7</title>
 
 <style>
-  body{
-    margin:0;
-    font-family: Arial, Helvetica, sans-serif;
-    background:#f5efe6;
-    color:#4a2e1f;
-  }
+:root{
+  --beige:#fff4e6;
+  --orange:#ff8c42;
+  --dark:#4a2c16;
+}
 
-  header{
-    text-align:center;
-    padding:20px;
-    background:#fff3e0;
-    border-bottom:3px solid #f4a261;
-  }
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:var(--beige);
+  color:var(--dark);
+  text-align:center;
+}
 
-  header img{
-    width:140px;
-    max-width:80%;
-    margin-bottom:10px;
-  }
+header{
+  padding:20px;
+}
 
-  header h1{
-    margin:5px 0;
-    color:#e76f51;
-  }
+header img{
+  width:120px;
+  margin-bottom:10px;
+}
 
-  .container{
-    padding:20px;
-    max-width:900px;
-    margin:auto;
-  }
+h1{
+  margin:5px 0;
+  color:var(--orange);
+}
 
-  .card{
-    background:#ffffff;
-    padding:16px;
-    border-radius:12px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    margin-bottom:16px;
-  }
+.card{
+  background:white;
+  margin:15px;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
 
-  button{
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:10px;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:10px;
-  }
+button{
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  font-size:16px;
+  border:none;
+  border-radius:10px;
+  background:var(--orange);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-  .sos{
-    background:#e63946;
-    color:white;
-  }
+button.secondary{
+  background:#ffd1a8;
+  color:#4a2c16;
+}
 
-  .secondary{
-    background:#f4a261;
-    color:#3b1f0e;
-  }
-
-  footer{
-    text-align:center;
-    padding:16px;
-    font-size:14px;
-    background:#fff3e0;
-    color:#7a5c3a;
-    margin-top:20px;
-  }
+footer{
+  margin-top:30px;
+  padding:15px;
+  font-size:14px;
+  background:#fff0df;
+}
 </style>
 </head>
 
 <body>
 
-<header>
-  <!-- LOGO -->
-  <img src="logo.png.jpeg" alt="She Shield Logo">
+<!-- ENABLE AUDIO -->
+<div id="enableBox" class="card">
+  <h2>Tap to Enable Safety System</h2>
+  <button onclick="enableSystem()">ENABLE</button>
+</div>
 
-  <h1>SHE SHIELD – SAFE HER</h1>
-  <p>Emergency Safety Web App</p>
+<header>
+  <img src="logo.png.jpeg" alt="She Shield Logo">
+  <h1>SHE SHIELD</h1>
+  <p>Women Safety System</p>
 </header>
 
-<div class="container">
+<div class="card">
+  <button onclick="startSiren()">🚨 Start Siren</button>
+  <button class="secondary" onclick="stopSiren()">Stop Siren</button>
+</div>
 
-  <div class="card">
-    <h3>Emergency SOS</h3>
-    <button class="sos" onclick="alert('SOS Triggered')">EMERGENCY SOS</button>
-  </div>
+<div class="card">
+  <button onclick="emergencySOS()">🆘 Emergency SOS</button>
+  <button class="secondary" onclick="shareLocation()">📍 Share Location</button>
+</div>
 
-  <div class="card">
-    <h3>Location</h3>
-    <button class="secondary" onclick="getLocation()">Share Live Location</button>
-    <p id="locationText"></p>
-  </div>
-
-  <div class="card">
-    <h3>Siren</h3>
-    <button class="secondary" onclick="playSiren()">Start Siren</button>
-  </div>
-
+<div class="card">
+  <button onclick="startVoice()">🎤 Voice SOS (say “help me”)</button>
 </div>
 
 <footer>
@@ -112,8 +102,92 @@
 </footer>
 
 <script>
-  // LOCATION
-  function getLocation(){
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition(pos=>{
-        document.getElementById("locationText
+let audioCtx, osc, gain;
+let enabled = false;
+
+/* ENABLE SYSTEM */
+function enableSystem(){
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  audioCtx.resume();
+  enabled = true;
+  document.getElementById("enableBox").style.display="none";
+  alert("System enabled");
+}
+
+/* SIREN */
+function startSiren(){
+  if(!enabled){ alert("Tap ENABLE first"); return; }
+  osc = audioCtx.createOscillator();
+  gain = audioCtx.createGain();
+  osc.type = "sawtooth";
+  osc.frequency.value = 700;
+  gain.gain.value = 1;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+}
+
+function stopSiren(){
+  if(osc){ osc.stop(); }
+}
+
+/* LOCATION */
+function shareLocation(){
+  if(!navigator.geolocation){
+    alert("Location not supported");
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+    const msg = `I need help. My location: https://maps.google.com/?q=${lat},${lon}`;
+    window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
+  },()=>{
+    alert("Location permission denied");
+  });
+}
+
+/* EMERGENCY */
+function emergencySOS(){
+  startSiren();
+  shareLocation();
+}
+
+/* VOICE */
+let recognition;
+function startVoice(){
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition){
+    alert("Voice not supported");
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.lang="en-US";
+  recognition.onresult = e=>{
+    const text = e.results[0][0].transcript.toLowerCase();
+    if(text.includes("help")){
+      emergencySOS();
+    }
+  };
+  recognition.start();
+  alert("Listening...");
+}
+
+/* SHAKE */
+let lastShake=0;
+window.addEventListener("devicemotion",e=>{
+  if(!enabled) return;
+  let a=e.accelerationIncludingGravity;
+  if(!a) return;
+  let g=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+  let now=Date.now();
+  if(g>22 && now-lastShake>2000){
+    lastShake=now;
+    emergencySOS();
+  }
+});
+</script>
+
+</body>
+</html>
+
