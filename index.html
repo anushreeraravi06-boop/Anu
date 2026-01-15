@@ -8,7 +8,7 @@
 <style>
 body{
   margin:0;
-  font-family: system-ui, Arial;
+  font-family:system-ui,Arial;
   background:#f5efe6;
   color:#3b2a1a;
 }
@@ -17,15 +17,6 @@ body{
   margin:auto;
   padding:16px;
 }
-.logo{
-  display:block;
-  width:90px;
-  margin:10px auto;
-}
-h1,h2{
-  text-align:center;
-  color:#d35400;
-}
 .card{
   background:#fff6ea;
   border-radius:16px;
@@ -33,6 +24,7 @@ h1,h2{
   margin-bottom:18px;
   box-shadow:0 6px 18px rgba(0,0,0,.18);
 }
+h1,h2{text-align:center;color:#d35400;}
 button{
   width:100%;
   padding:14px;
@@ -41,10 +33,10 @@ button{
   border-radius:14px;
   font-size:16px;
   font-weight:600;
+  background:#d35400;
+  color:white;
 }
-.orange{background:#d35400;color:#fff;}
-.dark{background:#6e2c00;color:#fff;}
-.gray{background:#aaa;color:#fff;}
+.gray{background:#999}
 input{
   width:100%;
   padding:12px;
@@ -52,11 +44,12 @@ input{
   border-radius:10px;
   border:1px solid #ccc;
 }
-footer{
-  text-align:center;
-  margin:30px 0 10px;
-  color:#6b4b2a;
+.logo{
+  display:block;
+  margin:10px auto;
+  width:90px;
 }
+footer{text-align:center;color:#6b4b2a;margin-top:25px}
 </style>
 </head>
 
@@ -67,145 +60,18 @@ footer{
 <img src="logo.png.jpeg" class="logo">
 <h1>SHE SHIELD</h1>
 
+<!-- ENABLE SYSTEM -->
 <div class="card">
-<h2>Primary Contacts (max 5)</h2>
-<input id="p1" placeholder="Contact 1 (+country code)">
-<input id="p2" placeholder="Contact 2">
-<input id="p3" placeholder="Contact 3">
-<input id="p4" placeholder="Contact 4">
-<input id="p5" placeholder="Contact 5">
-<button class="orange" onclick="saveContacts()">💾 Save Contacts</button>
-<p id="status"></p>
+<h2>Enable System</h2>
+<button onclick="enableSystem()">🔓 Enable Audio & Voice</button>
+<p id="sysStatus" style="text-align:center"></p>
 </div>
 
 <div class="card">
-<h2>Emergency SOS</h2>
-<button class="orange" onclick="triggerSOS()">🚨 Emergency SOS</button>
-</div>
-
-<div class="card">
-<h2>Siren</h2>
-<button class="dark" onclick="startSiren()">🔊 Start Siren</button>
-<button class="gray" onclick="stopSiren()">Stop Siren</button>
-</div>
-
-<div class="card">
-<h2>Voice SOS</h2>
-<button class="orange" onclick="startVoice()">🎤 Say “HELP ME”</button>
-</div>
-
-<div class="card">
-<h2>Fake Incoming Call</h2>
-<button class="orange" onclick="fakeCall()">📞 Fake Call</button>
-</div>
-
-<div class="card">
-<h2>Emergency Helplines</h2>
-<button class="dark" onclick="dial('112')">🚓 Police 112</button>
-<button class="dark" onclick="dial('181')">👩 Women Helpline 181</button>
-<button class="dark" onclick="dial('108')">🚑 Ambulance 108</button>
-</div>
-
-<footer>
-Designed and Developed by <strong>Elite 7</strong>
-</footer>
-
-</div>
-
-<!-- HIGH VOLUME EMERGENCY ALARM -->
-<audio id="alarm" loop preload="auto">
-<source src="https://actions.google.com/sounds/v1/alarms/emergency_alarm.ogg">
-</audio>
-
-<script>
-let contacts=[];
-
-/* CONTACTS */
-function saveContacts(){
- contacts=[p1.value,p2.value,p3.value,p4.value,p5.value].filter(x=>x);
- localStorage.setItem("she_contacts",JSON.stringify(contacts));
- status.innerText="Contacts saved successfully ✔";
-}
-(function(){
- let c=localStorage.getItem("she_contacts");
- if(c) contacts=JSON.parse(c);
-})();
-
-/* LOCATION + WHATSAPP */
-function sendLocation(){
- navigator.geolocation.getCurrentPosition(pos=>{
-  let link=`https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-  contacts.forEach(n=>{
-   window.open(
-    `https://wa.me/${n}?text=EMERGENCY! I need help. My live location: ${encodeURIComponent(link)}`,
-    "_blank"
-   );
-  });
- });
-}
-
-/* SOS */
-function triggerSOS(){
- startSiren();
- sendLocation();
-}
-
-/* SIREN */
-let alarm=document.getElementById("alarm");
-function startSiren(){
- alarm.volume=1;
- alarm.play();
-}
-function stopSiren(){
- alarm.pause();
- alarm.currentTime=0;
-}
-
-/* FAKE CALL – MALE VOICE */
-function fakeCall(){
- let msg="Hello, where are you? Why haven't you reached yet? Should I tell your father? He will call ministers.";
- let speech=new SpeechSynthesisUtterance(msg);
- speech.rate=0.85;
- speech.pitch=0.7;
- let voices=speechSynthesis.getVoices();
- speech.voice=voices.find(v=>v.name.toLowerCase().includes("male")) || voices[0];
- speechSynthesis.speak(speech);
- alert("Incoming Call");
-}
-
-/* VOICE SOS */
-function startVoice(){
- if(!('webkitSpeechRecognition' in window)){
-  alert("Voice not supported");
-  return;
- }
- let r=new webkitSpeechRecognition();
- r.lang="en-US";
- r.onresult=e=>{
-  if(e.results[0][0].transcript.toLowerCase().includes("help")){
-   triggerSOS();
-  }
- };
- r.start();
-}
-
-/* SHAKE SOS */
-let lastShake=0;
-window.addEventListener("devicemotion",e=>{
- let a=e.accelerationIncludingGravity;
- let g=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
- let now=Date.now();
- if(g>25 && now-lastShake>2000){
-  lastShake=now;
-  triggerSOS();
- }
-});
-
-/* DIAL */
-function dial(n){
- location.href="tel:"+n;
-}
-</script>
-
-</body>
-</html>
+<h2>Primary Contacts</h2>
+<input id="c1" placeholder="Contact 1 (+country)">
+<input id="c2" placeholder="Contact 2">
+<input id="c3" placeholder="Contact 3">
+<input id="c4" placeholder="Contact 4">
+<input id="c5" placeholder="Contact 5">
+<button oncli
