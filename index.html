@@ -8,55 +8,54 @@
 <style>
 body{
   margin:0;
-  font-family: Arial, sans-serif;
-  background:#f6efe6;
-  color:#3a2a1a;
+  font-family: system-ui, Arial;
+  background:#f5efe6;
+  color:#3b2a1a;
 }
 .container{
   max-width:420px;
   margin:auto;
   padding:16px;
 }
-.card{
-  background:#fff4e6;
-  border-radius:14px;
-  padding:16px;
-  margin-bottom:18px;
-  box-shadow:0 6px 18px rgba(0,0,0,.15);
+.logo{
+  display:block;
+  width:90px;
+  margin:10px auto;
 }
 h1,h2{
   text-align:center;
   color:#d35400;
+}
+.card{
+  background:#fff6ea;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,.18);
 }
 button{
   width:100%;
   padding:14px;
   margin-top:10px;
   border:none;
-  border-radius:12px;
+  border-radius:14px;
   font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
+  font-weight:600;
 }
-.orange{background:#d35400;color:white;}
-.dark{background:#5a2a00;color:white;}
-.gray{background:#999;color:white;}
+.orange{background:#d35400;color:#fff;}
+.dark{background:#6e2c00;color:#fff;}
+.gray{background:#aaa;color:#fff;}
 input{
   width:100%;
   padding:12px;
   margin-top:8px;
-  border-radius:8px;
+  border-radius:10px;
   border:1px solid #ccc;
 }
 footer{
   text-align:center;
-  margin-top:30px;
+  margin:30px 0 10px;
   color:#6b4b2a;
-}
-.logo{
-  display:block;
-  margin:10px auto;
-  width:90px;
 }
 </style>
 </head>
@@ -70,13 +69,13 @@ footer{
 
 <div class="card">
 <h2>Primary Contacts (max 5)</h2>
-<input id="c1" placeholder="Contact 1 (+country code)">
-<input id="c2" placeholder="Contact 2">
-<input id="c3" placeholder="Contact 3">
-<input id="c4" placeholder="Contact 4">
-<input id="c5" placeholder="Contact 5">
-<button class="orange" onclick="saveContacts()">Save Contacts</button>
-<p id="saved"></p>
+<input id="p1" placeholder="Contact 1 (+country code)">
+<input id="p2" placeholder="Contact 2">
+<input id="p3" placeholder="Contact 3">
+<input id="p4" placeholder="Contact 4">
+<input id="p5" placeholder="Contact 5">
+<button class="orange" onclick="saveContacts()">💾 Save Contacts</button>
+<p id="status"></p>
 </div>
 
 <div class="card">
@@ -102,9 +101,9 @@ footer{
 
 <div class="card">
 <h2>Emergency Helplines</h2>
-<button class="dark" onclick="callNumber('112')">🚓 Police 112</button>
-<button class="dark" onclick="callNumber('181')">👩 Women Helpline 181</button>
-<button class="dark" onclick="callNumber('108')">🚑 Ambulance 108</button>
+<button class="dark" onclick="dial('112')">🚓 Police 112</button>
+<button class="dark" onclick="dial('181')">👩 Women Helpline 181</button>
+<button class="dark" onclick="dial('108')">🚑 Ambulance 108</button>
 </div>
 
 <footer>
@@ -113,81 +112,84 @@ Designed and Developed by <strong>Elite 7</strong>
 
 </div>
 
-<audio id="siren" loop>
-<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
-</audio>
-
-<audio id="fakevoice">
-<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1d3bb5b91d.mp3">
+<!-- HIGH VOLUME EMERGENCY ALARM -->
+<audio id="alarm" loop preload="auto">
+<source src="https://actions.google.com/sounds/v1/alarms/emergency_alarm.ogg">
 </audio>
 
 <script>
 let contacts=[];
 
+/* CONTACTS */
 function saveContacts(){
- contacts=[
-  c1.value,c2.value,c3.value,c4.value,c5.value
- ].filter(x=>x);
- localStorage.setItem("contacts",JSON.stringify(contacts));
- saved.innerText="Contacts saved ✔";
+ contacts=[p1.value,p2.value,p3.value,p4.value,p5.value].filter(x=>x);
+ localStorage.setItem("she_contacts",JSON.stringify(contacts));
+ status.innerText="Contacts saved successfully ✔";
 }
-
-function loadContacts(){
- let c=localStorage.getItem("contacts");
+(function(){
+ let c=localStorage.getItem("she_contacts");
  if(c) contacts=JSON.parse(c);
-}
-loadContacts();
+})();
 
-function getLocation(callback){
- navigator.geolocation.getCurrentPosition(
-  pos=>{
-   let link=`https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-   callback(link);
-  },
-  ()=>alert("Location permission needed")
- );
-}
-
-function triggerSOS(){
- getLocation(link=>{
-  contacts.forEach(num=>{
-   window.open(`https://wa.me/${num}?text=EMERGENCY! I need help. My location: ${encodeURIComponent(link)}`);
+/* LOCATION + WHATSAPP */
+function sendLocation(){
+ navigator.geolocation.getCurrentPosition(pos=>{
+  let link=`https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+  contacts.forEach(n=>{
+   window.open(
+    `https://wa.me/${n}?text=EMERGENCY! I need help. My live location: ${encodeURIComponent(link)}`,
+    "_blank"
+   );
   });
  });
+}
+
+/* SOS */
+function triggerSOS(){
  startSiren();
+ sendLocation();
 }
 
-let siren=document.getElementById("siren");
-function startSiren(){siren.play();}
-function stopSiren(){siren.pause();siren.currentTime=0;}
-
-function callNumber(n){
- window.location.href=`tel:${n}`;
+/* SIREN */
+let alarm=document.getElementById("alarm");
+function startSiren(){
+ alarm.volume=1;
+ alarm.play();
+}
+function stopSiren(){
+ alarm.pause();
+ alarm.currentTime=0;
 }
 
+/* FAKE CALL – MALE VOICE */
 function fakeCall(){
- let v=document.getElementById("fakevoice");
- v.play();
- alert("Incoming Call:\nHello where are you?\nWhy haven't you reached yet?\nShould I tell your father?\nHe will call ministers.");
+ let msg="Hello, where are you? Why haven't you reached yet? Should I tell your father? He will call ministers.";
+ let speech=new SpeechSynthesisUtterance(msg);
+ speech.rate=0.85;
+ speech.pitch=0.7;
+ let voices=speechSynthesis.getVoices();
+ speech.voice=voices.find(v=>v.name.toLowerCase().includes("male")) || voices[0];
+ speechSynthesis.speak(speech);
+ alert("Incoming Call");
 }
 
-let rec;
+/* VOICE SOS */
 function startVoice(){
- if(!('webkitSpeechRecognition'in window)){
+ if(!('webkitSpeechRecognition' in window)){
   alert("Voice not supported");
   return;
  }
- rec=new webkitSpeechRecognition();
- rec.lang="en-US";
- rec.onresult=e=>{
-  let t=e.results[0][0].transcript.toLowerCase();
-  if(t.includes("help")){
+ let r=new webkitSpeechRecognition();
+ r.lang="en-US";
+ r.onresult=e=>{
+  if(e.results[0][0].transcript.toLowerCase().includes("help")){
    triggerSOS();
   }
  };
- rec.start();
+ r.start();
 }
 
+/* SHAKE SOS */
 let lastShake=0;
 window.addEventListener("devicemotion",e=>{
  let a=e.accelerationIncludingGravity;
@@ -198,6 +200,11 @@ window.addEventListener("devicemotion",e=>{
   triggerSOS();
  }
 });
+
+/* DIAL */
+function dial(n){
+ location.href="tel:"+n;
+}
 </script>
 
 </body>
