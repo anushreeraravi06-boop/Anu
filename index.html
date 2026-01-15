@@ -2,203 +2,31 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SHE SHIELD – Elite 7</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>She-Shield Elite 7</title>
 
 <style>
 body{
   margin:0;
-  font-family:system-ui, Arial;
-  background:linear-gradient(#2a1a08,#000);
-  color:#fff;
+  font-family:system-ui,Arial;
+  background:linear-gradient(#3b2a1a,#000);
 }
-.container{
-  max-width:420px;
-  margin:auto;
-  padding:15px;
-}
-.logo{text-align:center;}
-.logo img{width:120px;margin-bottom:10px;}
+.container{max-width:420px;margin:auto;padding:15px}
+.logo{text-align:center}
+.logo img{width:120px;margin:10px auto}
+
 .card{
-  background:#1c1c1c;
-  border-radius:15px;
+  background:#f5efe6;
+  border-radius:18px;
   padding:15px;
-  margin-bottom:15px;
+  margin-bottom:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,.35)
 }
-h2{color:#ff9f43;margin-top:0;}
+h2{color:#c25a00;margin:0 0 10px}
+
 input{
   width:100%;
   padding:12px;
-  border:none;
   border-radius:10px;
-  margin:6px 0;
-  font-size:16px;
-}
-button{
-  width:100%;
-  padding:14px;
-  margin-top:8px;
-  border:none;
-  border-radius:12px;
-  font-size:17px;
-  font-weight:bold;
-  background:#8a2f00;
-  color:#fff;
-}
-.gray{background:#555;}
-footer{
-  text-align:center;
-  padding:15px;
-  font-size:14px;
-  color:#caa56a;
-}
-.status{
-  text-align:center;
-  font-size:14px;
-  color:#bbb;
-}
-</style>
-</head>
-
-<body>
-<div class="container">
-
-<div class="logo">
-<img src="logo.png.jpeg" alt="Logo">
-</div>
-
-<div class="card">
-<h2>Emergency SOS</h2>
-<button onclick="triggerSOS()">🚨 Emergency SOS</button>
-</div>
-
-<div class="card">
-<h2>Voice SOS</h2>
-<button onclick="startVoice()">🎤 Say “HELP ME”</button>
-</div>
-
-<div class="card">
-<h2>Siren</h2>
-<button onclick="startSiren()">🔊 Start Siren</button>
-<button class="gray" onclick="stopSiren()">Stop Siren</button>
-</div>
-
-<div class="card">
-<h2>Share Live Location</h2>
-<button onclick="shareLocation()">📍 Share Location</button>
-</div>
-
-<div class="card">
-<h2>Fake Call</h2>
-<button onclick="fakeCall()">📞 Incoming Call</button>
-</div>
-
-<div class="card">
-<h2>Primary Contacts (WhatsApp)</h2>
-<input id="c1" placeholder="Contact 1 (+countrycode)">
-<input id="c2" placeholder="Contact 2 (+countrycode)">
-<input id="c3" placeholder="Contact 3 (+countrycode)">
-<input id="c4" placeholder="Contact 4 (+countrycode)">
-<input id="c5" placeholder="Contact 5 (+countrycode)">
-<button onclick="saveContacts()">💾 Save Contacts</button>
-<div class="status" id="saved"></div>
-</div>
-
-<div class="card">
-<h2>Emergency Helplines</h2>
-<button onclick="call('112')">🚓 Police 112</button>
-<button onclick="call('181')">👩 Women Helpline 181</button>
-<button class="gray" onclick="call('108')">🚑 Ambulance 108</button>
-</div>
-
-<div class="status">System enabled</div>
-
-<footer>
-Designed and Developed by <strong>Elite 7</strong>
-</footer>
-
-</div>
-
-<script>
-let contacts=JSON.parse(localStorage.getItem("contacts")||"[]");
-let sirenCtx,osc;
-
-function saveContacts(){
-  contacts=[c1.value,c2.value,c3.value,c4.value,c5.value].filter(v=>v);
-  localStorage.setItem("contacts",JSON.stringify(contacts));
-  saved.innerText="Saved "+contacts.length+" contacts";
-}
-
-function startSiren(){
-  sirenCtx=new AudioContext();
-  osc=sirenCtx.createOscillator();
-  osc.type="square";
-  osc.frequency.setValueAtTime(1200,sirenCtx.currentTime);
-  osc.connect(sirenCtx.destination);
-  osc.start();
-}
-
-function stopSiren(){
-  if(osc){osc.stop();}
-}
-
-function openWhatsApp(msg){
-  contacts.forEach(c=>{
-    window.open(`https://wa.me/${c}?text=`+encodeURIComponent(msg),"_blank");
-  });
-}
-
-function getLocation(cb){
-  navigator.geolocation.getCurrentPosition(pos=>{
-    cb(`https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`);
-  });
-}
-
-function triggerSOS(){
-  startSiren();
-  getLocation(loc=>{
-    openWhatsApp("EMERGENCY! I need help.\n"+loc);
-  });
-}
-
-function shareLocation(){
-  getLocation(loc=>{
-    openWhatsApp("Sharing my live location:\n"+loc);
-  });
-}
-
-function startVoice(){
-  const r=new (webkitSpeechRecognition||SpeechRecognition)();
-  r.lang="en-US";
-  r.onresult=e=>{
-    if(e.results[0][0].transcript.toLowerCase().includes("help")){
-      triggerSOS();
-    }
-  };
-  r.start();
-}
-
-function fakeCall(){
-  const msg="Hello, where are you? Why haven't you reached yet? Should I tell your father? He will call ministers.";
-  const u=new SpeechSynthesisUtterance(msg);
-  u.rate=0.9; u.pitch=0.8;
-  u.voice=speechSynthesis.getVoices().find(v=>v.name.toLowerCase().includes("male"))||speechSynthesis.getVoices()[0];
-  speechSynthesis.speak(u);
-  alert("Incoming call…");
-}
-
-function call(n){location.href="tel:"+n;}
-
-// SHAKE SOS
-let last=0;
-window.addEventListener("devicemotion",e=>{
-  const a=e.accelerationIncludingGravity;
-  const s=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
-  if(s>25 && Date.now()-last>3000){
-    last=Date.now();
-    triggerSOS();
-  }
-});
-</script>
-</body>
-</html>
+  border:1px solid #d6c7b2;
+  margin:
