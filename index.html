@@ -10,68 +10,235 @@ body{
   margin:0;
   font-family:system-ui,Arial;
   background:#f5efe6;
-  color:#3b2a1a;
+  color:#3a2a1a;
 }
 .container{
   max-width:420px;
   margin:auto;
   padding:16px;
 }
+.logo{
+  text-align:center;
+}
+.logo img{
+  width:120px;
+  margin-top:10px;
+}
+h1{
+  text-align:center;
+  color:#d56a00;
+}
 .card{
   background:#fff6ea;
-  border-radius:16px;
+  border-radius:18px;
   padding:16px;
   margin-bottom:18px;
-  box-shadow:0 6px 18px rgba(0,0,0,.18);
+  box-shadow:0 6px 18px rgba(0,0,0,.2);
 }
-h1,h2{text-align:center;color:#d35400;}
-button{
-  width:100%;
-  padding:14px;
-  margin-top:10px;
-  border:none;
-  border-radius:14px;
-  font-size:16px;
-  font-weight:600;
-  background:#d35400;
-  color:white;
+h2{
+  color:#c85a00;
+  margin-top:0;
 }
-.gray{background:#999}
 input{
   width:100%;
   padding:12px;
-  margin-top:8px;
+  margin:6px 0;
   border-radius:10px;
-  border:1px solid #ccc;
+  border:1px solid #d6c7b2;
 }
-.logo{
-  display:block;
-  margin:10px auto;
-  width:90px;
+button{
+  width:100%;
+  padding:14px;
+  margin-top:8px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:bold;
+  background:#d56a00;
+  color:white;
 }
-footer{text-align:center;color:#6b4b2a;margin-top:25px}
+.gray{
+  background:#b9b1a6;
+  color:#2b1b0e;
+}
+footer{
+  text-align:center;
+  margin:25px 0 10px;
+  color:#6b4b2a;
+}
+.countdown{
+  text-align:center;
+  font-weight:bold;
+  color:#b30000;
+}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
-<img src="logo.png.jpeg" class="logo">
+<div class="logo">
+  <img src="logo.png.jpeg">
+</div>
 <h1>SHE SHIELD</h1>
 
-<!-- ENABLE SYSTEM -->
 <div class="card">
-<h2>Enable System</h2>
-<button onclick="enableSystem()">🔓 Enable Audio & Voice</button>
-<p id="sysStatus" style="text-align:center"></p>
-</div>
-
-<div class="card">
-<h2>Primary Contacts</h2>
+<h2>Trusted Contacts (WhatsApp)</h2>
 <input id="c1" placeholder="Contact 1 (+country)">
 <input id="c2" placeholder="Contact 2">
 <input id="c3" placeholder="Contact 3">
 <input id="c4" placeholder="Contact 4">
 <input id="c5" placeholder="Contact 5">
-<button oncli
+<button onclick="saveContacts()">Save Contacts</button>
+<p id="saved"></p>
+</div>
+
+<div class="card">
+<h2>Emergency SOS</h2>
+<button onclick="startCountdown()">🚨 Emergency SOS</button>
+<p class="countdown" id="timer"></p>
+</div>
+
+<div class="card">
+<h2>Siren Alert</h2>
+<button onclick="startSiren()">🔊 Start Siren</button>
+<button class="gray" onclick="stopSiren()">Stop Siren</button>
+</div>
+
+<div class="card">
+<h2>Voice SOS</h2>
+<button onclick="startVoice()">🎤 Say “HELP”</button>
+</div>
+
+<div class="card">
+<h2>Live Location</h2>
+<button onclick="shareLocation()">📍 Share Live Location</button>
+</div>
+
+<div class="card">
+<h2>Fake Incoming Call</h2>
+<button onclick="fakeCall()">📞 Fake Call</button>
+</div>
+
+<div class="card">
+<h2>Emergency Helplines</h2>
+<button onclick="dial('112')">🚓 Police 112</button>
+<button onclick="dial('181')">👩 Women Helpline 181</button>
+<button onclick="dial('108')">🚑 Ambulance 108</button>
+</div>
+
+<footer>
+Designed and Developed by <strong>Elite 7</strong>
+</footer>
+
+</div>
+
+<script>
+/* CONTACTS */
+let contacts=[];
+function saveContacts(){
+  contacts=[c1.value,c2.value,c3.value,c4.value,c5.value].filter(x=>x);
+  localStorage.setItem("she_contacts",JSON.stringify(contacts));
+  saved.innerText="Saved "+contacts.length+" contacts";
+}
+contacts=JSON.parse(localStorage.getItem("she_contacts")||"[]");
+
+/* SIREN (LOUD) */
+let audioCtx,osc;
+function startSiren(){
+  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  osc=audioCtx.createOscillator();
+  let gain=audioCtx.createGain();
+  osc.type="square";
+  osc.frequency.value=1200;
+  gain.gain.value=1;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+}
+function stopSiren(){
+  if(osc)osc.stop();
+}
+
+/* LOCATION + WHATSAPP */
+function sendLocation(){
+  navigator.geolocation.getCurrentPosition(p=>{
+    let link=`https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
+    contacts.forEach(c=>{
+      window.open(
+        `https://wa.me/${c}?text=${encodeURIComponent("EMERGENCY! My location: "+link)}`,
+        "_blank"
+      );
+    });
+  });
+}
+function shareLocation(){
+  sendLocation();
+}
+
+/* AUTO SOS COUNTDOWN */
+let countdown;
+function startCountdown(){
+  let sec=10;
+  timer.innerText="Sending SOS in "+sec+" seconds";
+  countdown=setInterval(()=>{
+    sec--;
+    timer.innerText="Sending SOS in "+sec+" seconds";
+    if(sec<=0){
+      clearInterval(countdown);
+      timer.innerText="";
+      triggerSOS();
+    }
+  },1000);
+}
+
+/* SOS */
+function triggerSOS(){
+  startSiren();
+  sendLocation();
+}
+
+/* VOICE SOS */
+function startVoice(){
+  let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert("Voice not supported");return;}
+  let r=new SR();
+  r.lang="en-US";
+  r.onresult=e=>{
+    if(e.results[0][0].transcript.toLowerCase().includes("help")){
+      triggerSOS();
+    }
+  };
+  r.start();
+}
+
+/* FAKE CALL – STRICT MALE-LIKE */
+function fakeCall(){
+  let msg="Hello, where are you? Come quick, ministers and many high post professionals are here. Talk fast. Bye.";
+  let u=new SpeechSynthesisUtterance(msg);
+  u.rate=0.85;
+  u.pitch=0.6;
+  let v=speechSynthesis.getVoices();
+  u.voice=v.find(x=>x.name.toLowerCase().includes("male"))||v[0];
+  speechSynthesis.speak(u);
+  alert("Incoming Call");
+}
+
+/* SHAKE SOS */
+let last=0;
+window.addEventListener("devicemotion",e=>{
+  let a=e.accelerationIncludingGravity;
+  if(!a)return;
+  let g=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+  let now=Date.now();
+  if(g>22 && now-last>2000){
+    last=now;
+    triggerSOS();
+  }
+});
+
+/* CALL */
+function dial(n){location.href="tel:"+n;}
+</script>
+</body>
+</html>
