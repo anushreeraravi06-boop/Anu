@@ -29,4 +29,162 @@ input{
   padding:12px;
   border-radius:10px;
   border:1px solid #d6c7b2;
-  margin:
+  margin:6px 0;
+  font-size:15px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#d56a00;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  margin-top:8px;
+}
+
+button.gray{background:#b9b1a6;color:#2b1b0e}
+
+.status{text-align:center;color:#6d4a1f;font-size:14px}
+
+footer{
+  text-align:center;
+  padding:15px;
+  color:#e6d3b3;
+  font-size:14px
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div class="logo">
+  <img src="logo.png.jpeg" alt="She Shield Logo">
+</div>
+
+<!-- CONTACTS -->
+<div class="card">
+<h2>Primary Contacts</h2>
+<input id="c1" placeholder="Contact 1 (+country code)">
+<input id="c2" placeholder="Contact 2">
+<input id="c3" placeholder="Contact 3">
+<input id="c4" placeholder="Contact 4">
+<input id="c5" placeholder="Contact 5">
+<button onclick="saveContacts()">💾 Save Contacts</button>
+<div id="saved"></div>
+</div>
+
+<!-- SIREN -->
+<div class="card">
+<h2>Siren</h2>
+<button onclick="startSiren()">🔊 Start Siren</button>
+<button class="gray" onclick="stopSiren()">Stop Siren</button>
+</div>
+
+<!-- SOS -->
+<div class="card">
+<h2>Emergency SOS</h2>
+<button onclick="sendSOS()">🚨 Emergency SOS</button>
+</div>
+
+<!-- LOCATION -->
+<div class="card">
+<h2>Share Live Location</h2>
+<button onclick="shareLocation()">📍 Share Location</button>
+</div>
+
+<!-- VOICE -->
+<div class="card">
+<h2>Voice SOS</h2>
+<button onclick="startVoice()">🎤 Say “HELP ME”</button>
+</div>
+
+<!-- FAKE CALL -->
+<div class="card">
+<h2>Fake Call</h2>
+<button onclick="fakeCall()">📞 Incoming Call</button>
+</div>
+
+<div class="status" id="status">System enabled</div>
+
+<footer>Designed and Developed by <strong>Elite 7</strong></footer>
+</div>
+
+<script>
+let contacts=[];
+let audioCtx,osc;
+
+function saveContacts(){
+ contacts=[c1.value,c2.value,c3.value,c4.value,c5.value].filter(v=>v);
+ localStorage.setItem("contacts",JSON.stringify(contacts));
+ saved.innerHTML=contacts.map((c,i)=>`Contact ${i+1}: ${c}`).join("<br>");
+}
+
+function getContacts(){
+ return JSON.parse(localStorage.getItem("contacts")||"[]");
+}
+
+function sirenSound(){
+ audioCtx=new (window.AudioContext||webkitAudioContext)();
+ osc=audioCtx.createOscillator();
+ osc.type="square";
+ osc.frequency.setValueAtTime(1200,audioCtx.currentTime);
+ osc.connect(audioCtx.destination);
+ osc.start();
+}
+
+function startSiren(){sirenSound()}
+function stopSiren(){if(osc)osc.stop()}
+
+function sendSOS(){
+ stopSiren();
+ sirenSound();
+ shareLocation(true);
+}
+
+function shareLocation(auto=false){
+ navigator.geolocation.getCurrentPosition(pos=>{
+  let link=`https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+  getContacts().forEach(n=>{
+   window.open(`https://wa.me/${n}?text=EMERGENCY! My location: ${link}`,"_blank");
+  });
+ });
+}
+
+function startVoice(){
+ let r=new (window.SpeechRecognition||webkitSpeechRecognition)();
+ r.lang="en-IN";
+ r.start();
+ r.onresult=e=>{
+  if(e.results[0][0].transcript.toLowerCase().includes("help")){
+   sendSOS();
+  }
+ };
+}
+
+function fakeCall(){
+ let u=new SpeechSynthesisUtterance(
+ "Hello, where are you? Why haven’t you reached yet? Should I tell your father? He will call the ministers."
+ );
+ u.voice=speechSynthesis.getVoices().find(v=>v.name.toLowerCase().includes("male"))||speechSynthesis.getVoices()[0];
+ u.rate=0.95;
+ speechSynthesis.speak(u);
+}
+
+let lastShake=0;
+window.addEventListener("devicemotion",e=>{
+ let a=e.accelerationIncludingGravity;
+ if(!a)return;
+ let s=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+ let now=Date.now();
+ if(s>22 && now-lastShake>2000){
+  lastShake=now;
+  sendSOS();
+ }
+});
+</script>
+</body>
+</html>
