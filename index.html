@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHE SHIELD – SAFE HER</title>
+
+<style>
+:root{
+  --beige:#f5efe6;
+  --orange:#ff8c42;
+  --dark:#4a2c14;
+}
+
+*{
+  box-sizing:border-box;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body{
+  margin:0;
+  background:linear-gradient(180deg,#fff6ec,var(--beige));
+  color:var(--dark);
+}
+
+header{
+  text-align:center;
+  padding:20px;
+}
+
+header h1{
+  margin:0;
+  color:#c4571c;
+}
+
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+  margin:12px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.orange{
+  background:linear-gradient(90deg,#ff9a5c,#ff7a18);
+  color:white;
+}
+
+.beige{
+  background:#f3e6d8;
+  color:#5a3a20;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+#status{
+  font-size:14px;
+  color:#7a5c3a;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>SHE SHIELD</h1>
+  <p>Emergency Safety System</p>
+</header>
+
+<div class="card">
+  <button id="sirenBtn" class="orange">🔊 START SIREN</button>
+  <button id="stopSirenBtn" class="beige" style="margin-top:10px">⛔ STOP SIREN</button>
+</div>
+
+<div class="card">
+  <button id="sosBtn" class="orange">🚨 EMERGENCY SOS</button>
+</div>
+
+<div class="card">
+  <label>Primary Contacts (WhatsApp)</label>
+  <input id="c1" placeholder="Contact 1 (+91xxxxxxxxxx)">
+  <input id="c2" placeholder="Contact 2 (+91xxxxxxxxxx)" style="margin-top:6px">
+  <input id="c3" placeholder="Contact 3 (+91xxxxxxxxxx)" style="margin-top:6px">
+</div>
+
+<div class="card">
+  <button id="saveContacts" class="beige">💾 Save Contacts</button>
+</div>
+
+<div class="card">
+  <button id="fakeCall" class="beige">📞 Fake Call</button>
+</div>
+
+<div class="card">
+  <button id="voiceBtn" class="beige">🎙️ Voice Help</button>
+</div>
+
+<div class="card">
+  <button id="getLocation" class="beige">📍 Share Location</button>
+  <div id="status"></div>
+</div>
+
+<!-- LOGO -->
+<div style="text-align:center;margin-top:30px;">
+  <img src="logo.png" alt="Elite 7 Logo" style="width:120px;border-radius:14px;">
+</div>
+
+<!-- FOOTER -->
+<footer style="
+  text-align:center;
+  padding:16px;
+  font-size:14px;
+  color:#7a5c3a;
+  background:#f5efe6;
+  margin-top:20px;
+">
+  Designed and Developed by <strong>Elite 7</strong>
+</footer>
+
+<script>
+/* SIREN */
+let audioCtx, osc, gain;
+
+function startSiren(){
+  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  osc=audioCtx.createOscillator();
+  gain=audioCtx.createGain();
+  osc.type="sawtooth";
+  osc.frequency.setValueAtTime(700,audioCtx.currentTime);
+  gain.gain.value=1;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+}
+
+function stopSiren(){
+  if(osc){
+    osc.stop();
+    audioCtx.close();
+  }
+}
+
+document.getElementById("sirenBtn").onclick=startSiren;
+document.getElementById("stopSirenBtn").onclick=stopSiren;
+
+/* CONTACTS */
+document.getElementById("saveContacts").onclick=()=>{
+  localStorage.setItem("contacts",JSON.stringify([
+    c1.value,c2.value,c3.value
+  ]));
+  alert("Contacts Saved");
+};
+
+/* LOCATION + WHATSAPP */
+function sendLocation(){
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const link=`https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+    const contacts=JSON.parse(localStorage.getItem("contacts")||"[]");
+    contacts.forEach(num=>{
+      if(num){
+        window.open(`https://wa.me/${num}?text=EMERGENCY! My location: ${link}`,"_blank");
+      }
+    });
+  });
+}
+document.getElementById("getLocation").onclick=sendLocation;
+
+/* SOS */
+document.getElementById("sosBtn").onclick=()=>{
+  startSiren();
+  sendLocation();
+};
+
+/* FAKE CALL */
+document.getElementById("fakeCall").onclick=()=>{
+  const audio=new Audio("https://actions.google.com/sounds/v1/alarms/phone_alerts_and_rings.ogg");
+  audio.play();
+  alert("Incoming Call: Father");
+};
+
+/* VOICE */
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SpeechRecognition){
+  const rec=new SpeechRecognition();
+  rec.onresult=e=>{
+    const text=e.results[0][0].transcript.toLowerCase();
+    if(text.includes("help")){
+      startSiren();
+      sendLocation();
+    }
+  };
+  document.getElementById("voiceBtn").onclick=()=>rec.start();
+}
+
+/* SHAKE */
+let lastShake=0;
+window.addEventListener("devicemotion",e=>{
+  const a=e.accelerationIncludingGravity;
+  const force=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+  if(force>22 && Date.now()-lastShake>2000){
+    lastShake=Date.now();
+    startSiren();
+    sendLocation();
+  }
+});
+</script>
+
+</body>
+</html>
