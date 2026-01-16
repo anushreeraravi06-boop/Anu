@@ -2,196 +2,257 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>She Shield</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>She-Shield</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f0e6; /* beige */
-  color: #000;
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5efe6;
+  color:#3a2c2c;
 }
-header {
-  background: #f28c28; /* orange */
-  padding: 10px;
-  text-align: center;
+.container{
+  max-width:420px;
+  margin:auto;
+  padding:16px;
 }
-header img {
-  width: 60px;
+h1{text-align:center;color:#e07a5f}
+.step{
+  background:#fffaf3;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.08)
 }
-h2 { margin: 10px 0; }
-.container {
-  padding: 15px;
+.step h3{margin:0 0 8px;color:#e07a5f}
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer
 }
-button {
-  width: 100%;
-  padding: 12px;
-  margin: 6px 0;
-  font-size: 16px;
-  background: #f28c28;
-  color: white;
-  border: none;
-  border-radius: 8px;
+.primary{background:#e07a5f;color:white}
+.secondary{background:#f4a261;color:white}
+.muted{background:#eee}
+input, textarea{
+  width:100%;
+  padding:10px;
+  margin-bottom:8px;
+  border-radius:8px;
+  border:1px solid #ccc
 }
-button:active {
-  opacity: 0.8;
+small{opacity:.7}
+.badge{
+  background:#f4a261;
+  color:white;
+  padding:2px 8px;
+  border-radius:8px;
+  font-size:12px;
+  display:inline-block;
+  margin-bottom:6px
 }
-.video-frame {
-  background: black;
-  border-radius: 15px;
-  overflow: hidden;
-  margin-top: 10px;
+#infoScreen{
+  position:fixed;
+  inset:0;
+  background:#f5efe6;
+  padding:20px;
+  overflow:auto;
+  display:none;
+  z-index:9999;
 }
-.video-frame img, video {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
+footer{
+  text-align:center;
+  font-size:13px;
+  margin:20px 0;
 }
-.info-screen {
-  display: none;
-  background: white;
-  color: black;
-  padding: 20px;
-  min-height: 100vh;
+.videoBox{
+  background:black;
+  border-radius:12px;
+  overflow:hidden;
+  margin-top:10px;
 }
-footer {
-  text-align: center;
-  font-size: 14px;
-  padding: 10px;
-}
-textarea {
-  width: 100%;
-  height: 120px;
-}
+video{width:100%}
 </style>
 </head>
 
 <body>
 
-<header>
-  <img src="logo.png.jpeg" alt="App Logo">
-  <h2>She Shield</h2>
-</header>
-
 <div class="container">
+<h1>She-Shield</h1>
 
-<!-- FAKE FEATURES -->
-<button onclick="incomingCall()">📞 Fake Incoming Call</button>
-<button onclick="startFakeVideo()">🎥 Fake Video Call</button>
-<button onclick="alert('Fake chat started')">💬 Fake Chat</button>
-
-<!-- EMERGENCY -->
-<button onclick="playSiren()">🚨 Siren</button>
-<button onclick="shareLocation()">📍 Share Location</button>
-<button onclick="startSOS()">🆘 Emergency SOS</button>
-
-<!-- HELPLINES -->
-<button onclick="call('100')">🚓 Police</button>
-<button onclick="call('181')">👩 Women Helpline</button>
-<button onclick="call('108')">🚑 Ambulance</button>
-
-<!-- INFO -->
-<button onclick="openInfo('how')">How to use this app</button>
-<button onclick="openInfo('app')">App Information</button>
-<button onclick="openInfo('defense')">Self Defense Tips</button>
-<button onclick="openInfo('issue')">Customer Issues</button>
-
-<div class="video-frame" id="videoBox" style="display:none;">
-  <img src="mother.jpeg" id="fakeImage">
-  <video id="camera" autoplay playsinline></video>
+<!-- SIREN -->
+<div class="step">
+  <span class="badge">Siren Alert</span>
+  <h3>Siren</h3>
+  <button class="primary" onclick="startSiren()">🔊 Start Siren</button>
+  <button class="muted" onclick="stopSiren()">Stop Siren</button>
 </div>
 
+<!-- EMERGENCY SOS -->
+<div class="step">
+  <span class="badge">Emergency</span>
+  <h3>Emergency SOS</h3>
+  <button class="primary" onclick="emergencySOS()">🚨 Emergency SOS</button>
+</div>
+
+<!-- AUTO SOS -->
+<div class="step">
+  <span class="badge">Auto SOS</span>
+  <h3>Auto SOS Countdown</h3>
+  <button class="secondary" onclick="startCountdown()">⏳ Start 10-Second Countdown</button>
+  <p id="countdownText"><small>Not started</small></p>
+</div>
+
+<!-- VOICE SOS -->
+<div class="step">
+  <span class="badge">Voice</span>
+  <h3>Voice SOS</h3>
+  <button class="secondary" onclick="startVoice()">🎙️ Say “HELP”</button>
+</div>
+
+<!-- FAKE CALL -->
+<div class="step">
+  <span class="badge">Fake</span>
+  <h3>Fake Incoming Call</h3>
+  <button class="secondary" onclick="fakeCall()">📞 Fake Call</button>
+  <button class="secondary" onclick="fakeVideo()">🎥 Fake Video Call</button>
+  <button class="secondary" onclick="alert('Fake chat started')">💬 Fake Chat</button>
+  <div class="videoBox" id="videoBox" style="display:none;">
+    <video id="cam" autoplay></video>
+  </div>
+</div>
+
+<!-- LOCATION -->
+<div class="step">
+  <span class="badge">Location</span>
+  <h3>Live Location</h3>
+  <button class="secondary" onclick="shareLiveLocation()">📍 Share Location</button>
+</div>
+
+<!-- HELPLINES -->
+<div class="step">
+  <span class="badge">Helpline</span>
+  <h3>Emergency Helplines</h3>
+  <a href="tel:112"><button class="primary">🚔 Police 112</button></a><br><br>
+  <a href="tel:181"><button class="secondary">👩 Women 181</button></a><br><br>
+  <a href="tel:108"><button class="muted">🚑 Ambulance 108</button></a>
+</div>
+
+<!-- INFO BUTTONS -->
+<div class="step">
+  <button class="secondary" onclick="openInfo('use')">How to use this app</button>
+  <button class="secondary" onclick="openInfo('safety')">Safety Tips</button>
+  <button class="secondary" onclick="openInfo('info')">App Information</button>
+  <button class="secondary" onclick="openInfo('customer')">Customer Issues</button>
 </div>
 
 <footer>
 Designed and developed by <b>ELITE 7</b>
 </footer>
+</div>
 
-<!-- INFO SCREENS -->
-<div class="info-screen" id="info">
+<!-- INFO SCREEN -->
+<div id="infoScreen">
   <h2 id="infoTitle"></h2>
   <div id="infoContent"></div>
-  <button onclick="closeInfo()">Back</button>
+  <br>
+  <button class="primary" onclick="closeInfo()">Back</button>
 </div>
 
 <script>
-let siren = new Audio("https://actions.google.com/sounds/v1/alarms/emergency_siren.ogg");
+let audioCtx, osc, recognition;
+let countdownTimer=null, countdown=10;
 
-function playSiren() {
-  siren.loop = true;
-  siren.play();
+/* SIREN */
+function startSiren(){
+  audioCtx=new AudioContext();
+  osc=audioCtx.createOscillator();
+  osc.frequency.value=700;
+  osc.connect(audioCtx.destination);
+  osc.start();
+}
+function stopSiren(){osc?.stop();}
+
+/* SOS */
+function emergencySOS(){
+  alert("Emergency SOS Activated");
 }
 
-function shareLocation() {
-  navigator.geolocation.getCurrentPosition(pos => {
-    alert("Location shared:\nLat: " + pos.coords.latitude + "\nLng: " + pos.coords.longitude);
+/* COUNTDOWN */
+function startCountdown(){
+  countdown=10;
+  document.getElementById("countdownText").innerHTML="<small>Countdown: 10</small>";
+  countdownTimer=setInterval(()=>{
+    countdown--;
+    document.getElementById("countdownText").innerHTML="<small>Countdown: "+countdown+"</small>";
+    if(countdown<=0){
+      clearInterval(countdownTimer);
+      emergencySOS();
+    }
+  },1000);
+}
+
+/* VOICE */
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();
+  recognition.onresult=e=>{
+    if(e.results[0][0].transcript.toLowerCase().includes("help"))
+      emergencySOS();
+  };
+  recognition.start();
+}
+
+/* FAKE CALL */
+function fakeCall(){
+  speechSynthesis.speak(new SpeechSynthesisUtterance(
+    "Where are you? Respond immediately."
+  ));
+}
+
+/* FAKE VIDEO */
+function fakeVideo(){
+  document.getElementById("videoBox").style.display="block";
+  navigator.mediaDevices.getUserMedia({video:true})
+    .then(s=>document.getElementById("cam").srcObject=s);
+}
+
+/* LOCATION */
+function shareLiveLocation(){
+  navigator.geolocation.getCurrentPosition(p=>{
+    window.open(`https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`);
   });
 }
 
-function call(num) {
-  window.location.href = "tel:" + num;
-}
+/* INFO */
+function openInfo(type){
+  document.getElementById("infoScreen").style.display="block";
+  let t=document.getElementById("infoTitle");
+  let c=document.getElementById("infoContent");
 
-function incomingCall() {
-  alert("Incoming call from Mother");
-}
-
-function startFakeVideo() {
-  document.getElementById("videoBox").style.display = "block";
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => {
-      document.getElementById("camera").srcObject = stream;
-    })
-    .catch(() => alert("Camera permission denied"));
-}
-
-function startSOS() {
-  let count = 5;
-  let interval = setInterval(() => {
-    if (count === 0) {
-      alert("SOS Sent!");
-      clearInterval(interval);
-    } else {
-      alert("SOS in " + count);
-      count--;
-    }
-  }, 1000);
-}
-
-function openInfo(type) {
-  document.getElementById("info").style.display = "block";
-  document.body.style.display = "none";
-  let title = document.getElementById("infoTitle");
-  let content = document.getElementById("infoContent");
-
-  if (type === "how") {
-    title.innerText = "How to use this app";
-    content.innerText = "Press SOS in emergency. Use fake call/video to escape unsafe situations.";
+  if(type==="use"){
+    t.innerText="How to use this app";
+    c.innerHTML="<p>Use SOS, siren, fake call and location sharing during emergencies.</p>";
   }
-  if (type === "app") {
-    title.innerText = "App Information";
-    content.innerText = "She Shield helps women stay safe using SOS, fake calls, siren and emergency tools.";
+  if(type==="safety"){
+    t.innerText="Safety Tips";
+    c.innerHTML="<ol>"+Array.from({length:20},(_,i)=>`<li>Safety tip ${i+1}</li>`).join("")+"</ol>";
   }
-  if (type === "defense") {
-    title.innerText = "Self Defense Tips";
-    content.innerHTML = "<ol>" +
-      "<li>Stay alert</li><li>Trust instincts</li><li>Use voice loudly</li><li>Carry safety tools</li>" +
-      "<li>Target eyes</li><li>Target nose</li><li>Target knees</li><li>Run to safe place</li>" +
-      "<li>Learn basic moves</li><li>Stay confident</li><li>Keep phone charged</li>" +
-      "<li>Avoid dark areas</li><li>Share location</li><li>Walk with purpose</li>" +
-      "<li>Emergency contacts ready</li><li>Know exits</li><li>Stay calm</li>" +
-      "<li>Use siren</li><li>Call help</li><li>Defend yourself</li></ol>";
+  if(type==="info"){
+    t.innerText="App Information";
+    c.innerHTML="<p>She-Shield is designed to help women stay safe using smart SOS tools.</p>";
   }
-  if (type === "issue") {
-    title.innerText = "Customer Issues";
-    content.innerHTML = "<textarea placeholder='Type your issue here'></textarea>";
+  if(type==="customer"){
+    t.innerText="Customer Issues";
+    c.innerHTML="<textarea placeholder='Type your issue here'></textarea>";
   }
 }
-
-function closeInfo() {
-  document.getElementById("info").style.display = "none";
-  document.body.style.display = "block";
+function closeInfo(){
+  document.getElementById("infoScreen").style.display="none";
 }
 </script>
 
