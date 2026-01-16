@@ -13,19 +13,46 @@ h1{text-align:center;color:#e07a5f}
 .logo{text-align:center;margin-bottom:10px}
 .logo img{width:120px;border-radius:16px}
 
-.card{background:#fffaf3;padding:14px;border-radius:14px;margin-bottom:14px;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+.card{
+  background:#fffaf3;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.08)
+}
 .card h3{margin:0 0 8px;color:#e07a5f}
 
-button{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer}
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer
+}
 .primary{background:#e07a5f;color:white}
 .secondary{background:#f4a261;color:white}
 .muted{background:#eee}
 
-input,textarea,select{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:1px solid #ccc}
+input,textarea,select{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+  border:1px solid #ccc
+}
 
 footer{text-align:center;font-size:13px;margin:20px 0}
 
-#overlay{position:fixed;inset:0;background:#fff;padding:20px;display:none;overflow:auto;z-index:9999}
+#overlay{
+  position:fixed; inset:0;
+  background:#fff;
+  padding:20px;
+  display:none;
+  overflow:auto;
+  z-index:9999
+}
 
 #enableScreen{
   position:fixed; inset:0;
@@ -41,7 +68,14 @@ footer{text-align:center;font-size:13px;margin:20px 0}
   max-width:300px
 }
 
-.chatBox{border:1px solid #ccc;border-radius:10px;padding:10px;height:230px;overflow:auto;margin-bottom:10px}
+.chatBox{
+  border:1px solid #ccc;
+  border-radius:10px;
+  padding:10px;
+  height:230px;
+  overflow:auto;
+  margin-bottom:10px
+}
 .msg{margin:6px 0}
 .bot{color:#e07a5f}
 .user{color:#000}
@@ -54,7 +88,7 @@ footer{text-align:center;font-size:13px;margin:20px 0}
 <div id="enableScreen">
   <div id="enableBox">
     <h3>Enable Safety System</h3>
-    <p>This allows microphone, motion sensor, sound and location for SOS.</p>
+    <p>This allows microphone, motion, sound and location for SOS.</p>
     <button class="primary" onclick="enableSystem()">Enable</button>
   </div>
 </div>
@@ -142,15 +176,12 @@ footer{text-align:center;font-size:13px;margin:20px 0}
 <script>
 /* GLOBAL */
 const KEY="she_contacts";
-let audioCtx,osc1,osc2;
-let lastShake=0;
-let autoTimer,count=10;
-let recognition;
+let audioCtx,osc1,osc2,lastShake=0,autoTimer,count=10,recognition;
 
-/* ENABLE SYSTEM */
+/* ENABLE */
 function enableSystem(){
   document.getElementById("enableScreen").style.display="none";
-  audioCtx = new (window.AudioContext||webkitAudioContext)();
+  audioCtx=new (window.AudioContext||webkitAudioContext)();
   audioCtx.resume();
   initShake();
 }
@@ -191,7 +222,7 @@ function stopSiren(){
   if(osc2){osc2.stop();osc2=null}
 }
 
-/* SEND SOS */
+/* SOS */
 function sendSOS(){
   startSiren();
   const list=JSON.parse(localStorage.getItem(KEY)||"[]");
@@ -224,8 +255,7 @@ function startVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   recognition=new SR();
   recognition.onresult=e=>{
-    const t=e.results[0][0].transcript.toLowerCase();
-    if(t.includes("help")){
+    if(e.results[0][0].transcript.toLowerCase().includes("help")){
       sendSOS();
     }
   };
@@ -249,8 +279,9 @@ function initShake(){
 /* FAKE CALL */
 function fakeCall(){
   speechSynthesis.cancel();
-  const text="Hello. Where are you? How long will you be there? How quick. Everyone are waiting. If you are late we need to call police.";
-  speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  speechSynthesis.speak(new SpeechSynthesisUtterance(
+    "Hello. Where are you? How long will you be there? How quick. Everyone are waiting. If you are late we need to call police."
+  ));
 }
 
 /* FAKE CHAT */
@@ -258,17 +289,23 @@ function openFakeChat(){
   overlay.style.display="block";
   overlayTitle.innerText="Fake Chat";
   overlayContent.innerHTML=
-    "<div class='chatBox' id='chatBox'><div class='msg bot'>Are you safe?</div></div>"+
+    "<div class='chatBox' id='chatBox'><div class='msg bot'>Are you safe right now?</div></div>"+
     "<input id='chatInput' placeholder='Type message'>"+
     "<button class='secondary' onclick='sendChatMsg()'>Send</button>";
 }
 function sendChatMsg(){
   const box=document.getElementById("chatBox");
   const i=document.getElementById("chatInput");
+  const t=i.value.toLowerCase();
   box.innerHTML+=`<div class='msg user'>${i.value}</div>`;
-  box.innerHTML+=`<div class='msg bot'>Stay calm. Help is coming.</div>`;
-  i.value="";
-  box.scrollTop=box.scrollHeight;
+  let r="Stay calm. I’m with you.";
+  if(t.includes("scared")) r="I’m here. Take deep breaths.";
+  else if(t.includes("following")) r="Move to a crowded place immediately.";
+  else if(t.includes("help")) r="Help is being arranged. Stay with me.";
+  else if(t.includes("police")) r="Police have been informed.";
+  else if(t.includes("where")) r="I’m nearby. Share your location.";
+  box.innerHTML+=`<div class='msg bot'>${r}</div>`;
+  i.value=""; box.scrollTop=box.scrollHeight;
 }
 
 /* INFO */
@@ -276,22 +313,23 @@ function openInfo(type){
   overlay.style.display="block";
   if(type==="use"){
     overlayTitle.innerText="How to Use This App";
-    overlayContent.innerHTML="<ol><li>Add trusted contacts</li><li>Enable system</li><li>Use SOS / Voice / Shake</li><li>Auto SOS if unable</li><li>Call helplines</li></ol>";
+    overlayContent.innerHTML="<ol><li>Enable safety system</li><li>Add trusted contacts</li><li>Use SOS, Voice or Shake</li><li>Auto SOS if unable</li><li>Use fake tools to escape</li></ol>";
   }
   if(type==="safety"){
     overlayTitle.innerText="Self-Defence Tips";
-    overlayContent.innerHTML="<p>20 safety tips included here.</p>";
+    overlayContent.innerHTML="<ol><li>Trust instincts</li><li>Stay alert</li><li>Avoid dark areas</li><li>Share location</li><li>Walk confidently</li><li>Use loud voice</li><li>Aim eyes</li><li>Aim nose</li><li>Hit knees</li><li>Run fast</li><li>Keep phone charged</li><li>Inform someone</li><li>Avoid distractions</li><li>Stay in groups</li><li>Learn self-defence</li><li>Know exits</li><li>Carry safety tools</li><li>Lock doors</li><li>Report incidents</li><li>Believe in safety</li></ol>";
   }
   if(type==="info"){
     overlayTitle.innerText="App Information";
-    overlayContent.innerHTML="<p>This app focuses on emergency response and privacy.</p>";
+    overlayContent.innerHTML="<p><b>Purpose:</b> Women safety response.</p><p><b>Privacy:</b> No data stored.</p><p><b>Permissions:</b> Used only during SOS.</p><p><b>Reliability:</b> Works on real phones.</p><p><b>Disclaimer:</b> Not a replacement for police.</p>";
   }
   if(type==="customer"){
     overlayTitle.innerText="Customer Issues";
-    overlayContent.innerHTML="<select><option>App issue</option><option>SOS issue</option><option>Other</option></select><textarea placeholder='Type issue'></textarea>";
+    overlayContent.innerHTML="<select><option>SOS issue</option><option>Location issue</option><option>Voice/Shake issue</option><option>Performance issue</option><option>Other</option></select><textarea placeholder='Type your issue here'></textarea>";
   }
 }
 function closeOverlay(){overlay.style.display="none";}
 </script>
+
 </body>
 </html>
