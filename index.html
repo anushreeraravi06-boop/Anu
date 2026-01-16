@@ -1,125 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Incoming Video Call</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>She-Shield</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      background: black;
-      color: white;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .call-container {
-      min-height: 100vh;
-      text-align: center;
-      padding: 16px;
-    }
-
-    /* APP LOGO */
-    .app-logo {
-      width: 70px;
-      height: 70px;
-      object-fit: contain;
-      margin: 10px auto 5px;
-      display: block;
-    }
-
-    .title {
-      font-size: 24px;
-      margin-top: 10px;
-    }
-
-    .profile {
-      margin-top: 10px;
-    }
-
-    .small-avatar {
-      width: 40px;
-      height: 40px;
-      background: #555;
-      border-radius: 50%;
-      margin: 0 auto 5px;
-    }
-
-    .caller-name {
-      font-size: 18px;
-    }
-
-    /* Fake video frame */
-    .video-frame {
-      width: 90%;
-      max-width: 420px;
-      height: 520px;
-      margin: 20px auto;
-      background: #111;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(255,255,255,0.1);
-    }
-
-    /* Mother image as video */
-    .video-feed {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    /* End call button */
-    .end-call {
-      width: 80%;
-      max-width: 320px;
-      padding: 15px;
-      font-size: 18px;
-      background: #8b1a1a;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-
-    .end-call:active {
-      background: #a32020;
-    }
-  </style>
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5efe6;
+  color:#3a2c2c;
+}
+.container{max-width:420px;margin:auto;padding:16px}
+h1{text-align:center;color:#e07a5f}
+.logo{display:block;margin:0 auto 8px;width:70px}
+.step{
+  background:#fffaf3;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.08)
+}
+.step h3{margin:0 0 8px;color:#e07a5f}
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer
+}
+.primary{background:#e07a5f;color:white}
+.secondary{background:#f4a261;color:white}
+.muted{background:#eee}
+input,textarea{
+  width:100%;
+  padding:10px;
+  margin-bottom:8px;
+  border-radius:8px;
+  border:1px solid #ccc
+}
+.badge{
+  background:#f4a261;color:white;
+  padding:2px 8px;border-radius:8px;
+  font-size:12px;display:inline-block;margin-bottom:6px
+}
+#infoScreen{
+  position:fixed;inset:0;
+  background:white;color:black;
+  padding:20px;
+  overflow:auto;display:none;z-index:9999
+}
+footer{text-align:center;font-size:12px;opacity:.6;margin-top:20px}
+</style>
 </head>
 
 <body>
 
-  <div class="call-container">
+<div class="container">
+<img src="logo.png.jpeg" class="logo">
+<h1>She-Shield</h1>
 
-    <!-- APP LOGO -->
-    <img src="logo.png.jpeg" alt="App Logo" class="app-logo">
+<!-- SIREN -->
+<div class="step">
+<span class="badge">SOS</span>
+<h3>Siren Alert</h3>
+<button class="primary" onclick="startSiren()">Start Siren</button>
+<button class="muted" onclick="stopSiren()">Stop</button>
+</div>
 
-    <h1 class="title">Incoming Video Call</h1>
+<!-- EMERGENCY SOS -->
+<div class="step">
+<h3>Emergency SOS</h3>
+<button class="primary" onclick="emergencySOS()">Emergency SOS</button>
+</div>
 
-    <div class="profile">
-      <div class="small-avatar"></div>
-      <div class="caller-name">Mother</div>
-    </div>
+<!-- LOCATION -->
+<div class="step">
+<h3>Share Location</h3>
+<button class="secondary" onclick="shareLiveLocation()">Share Location</button>
+</div>
 
-    <!-- Fake video call area -->
-    <div class="video-frame">
-      <img src="mother.jpeg" alt="Mother Video" class="video-feed">
-    </div>
+<!-- FAKE CALL -->
+<div class="step">
+<h3>Fake Call</h3>
+<button class="secondary" onclick="fakeCall()">Fake Incoming Call</button>
+</div>
 
-    <button class="end-call" onclick="endCall()">End Call</button>
+<!-- FAKE VIDEO -->
+<div class="step">
+<h3>Fake Video Call</h3>
+<button class="secondary" onclick="fakeVideo()">Allow Camera</button>
+<video id="video" autoplay playsinline style="width:100%;display:none"></video>
+</div>
 
-  </div>
+<!-- FAKE CHAT -->
+<div class="step">
+<h3>Fake Chat</h3>
+<button class="secondary" onclick="alert('Fake chat started')">Open Fake Chat</button>
+</div>
 
-  <script>
-    function endCall() {
-      alert("Call Ended");
-      location.reload();
-    }
-  </script>
+<!-- HELPLINES -->
+<div class="step">
+<h3>Emergency Helplines</h3>
+<a href="tel:112"><button class="primary">Police 112</button></a><br><br>
+<a href="tel:181"><button class="secondary">Women 181</button></a><br><br>
+<a href="tel:108"><button class="primary">Ambulance 108</button></a>
+</div>
+
+<!-- APP INFO -->
+<div class="step">
+<h3>App Information</h3>
+<button class="secondary" onclick="openInfo()">Open</button>
+</div>
+
+<footer>Designed and developed by ELITE 7</footer>
+</div>
+
+<!-- INFO SCREEN -->
+<div id="infoScreen">
+<h2>She-Shield</h2>
+<p><b>Why this app?</b><br>
+She-Shield is built to protect women in emergency situations using instant alerts, SOS triggers and fake escape tools.</p>
+
+<h3>Privacy</h3>
+<p>No personal data is stored or shared without user action.</p>
+
+<h3>Self-Defense Tips</h3>
+<ol>
+<li>Stay alert</li><li>Trust instincts</li><li>Keep distance</li><li>Use voice loudly</li>
+<li>Protect head</li><li>Target weak spots</li><li>Carry essentials</li><li>Avoid dark areas</li>
+<li>Share location</li><li>Learn escape moves</li>
+<li>Stay confident</li><li>Walk with purpose</li><li>Emergency numbers</li>
+<li>Practice drills</li><li>Stay calm</li><li>Observe exits</li>
+<li>Don’t panic</li><li>Use objects</li><li>Break contact</li><li>Seek help</li>
+</ol>
+
+<h3>Customer Issues</h3>
+<textarea placeholder="Type here..."></textarea>
+
+<button class="primary" onclick="closeInfo()">Close</button>
+</div>
+
+<script>
+let audioCtx,osc;
+
+function startSiren(){
+ audioCtx=new(AudioContext||webkitAudioContext)();
+ osc=audioCtx.createOscillator();
+ osc.frequency.value=700;
+ osc.connect(audioCtx.destination);
+ osc.start();
+}
+function stopSiren(){osc?.stop()}
+
+function emergencySOS(){alert("Emergency SOS triggered")}
+function shareLiveLocation(){navigator.geolocation.getCurrentPosition(p=>{
+ window.open(`https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`)
+})}
+
+function fakeCall(){
+ speechSynthesis.speak(new SpeechSynthesisUtterance("Where are you? Respond immediately."));
+}
+
+function fakeVideo(){
+ navigator.mediaDevices.getUserMedia({video:true}).then(s=>{
+ const v=document.getElementById("video");
+ v.style.display="block";
+ v.srcObject=s;
+ });
+}
+
+function openInfo(){document.getElementById("infoScreen").style.display="block"}
+function closeInfo(){document.getElementById("infoScreen").style.display="none"}
+</script>
 
 </body>
 </html>
