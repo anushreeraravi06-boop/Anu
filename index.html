@@ -96,7 +96,7 @@ footer{text-align:center;font-size:13px;margin:20px 0}
 <!-- EMERGENCY SOS -->
 <div class="card">
 <h3>Emergency SOS</h3>
-<button class="primary" onclick="triggerSOS()">🚨 Emergency SOS</button>
+<button class="primary" onclick="sendSOS()">🚨 Emergency SOS</button>
 </div>
 
 <!-- AUTO SOS -->
@@ -110,19 +110,13 @@ footer{text-align:center;font-size:13px;margin:20px 0}
 <!-- VOICE SOS -->
 <div class="card">
 <h3>Voice SOS</h3>
-<button class="secondary" onclick="startVoice()">🎙️ Say “HELP”</button>
+<button class="secondary" onclick="startVoice()">🎙️ Say “HELP ME”</button>
 </div>
 
 <!-- FAKE CALL -->
 <div class="card">
 <h3>Fake Incoming Call</h3>
 <button class="secondary" onclick="fakeCall()">📞 Fake Call</button>
-</div>
-
-<!-- FAKE VIDEO -->
-<div class="card">
-<h3>Fake Video Call</h3>
-<button class="secondary" onclick="fakeVideo()">🎥 Fake Video Call</button>
 </div>
 
 <!-- FAKE CHAT -->
@@ -193,7 +187,7 @@ function stopSiren(){
   if(osc2){osc2.stop();osc2=null}
 }
 
-/* COMMON SOS ACTION */
+/* SOS CORE */
 function sendSOS(){
   startSiren();
   const list=JSON.parse(localStorage.getItem(KEY)||"[]");
@@ -205,9 +199,6 @@ function sendSOS(){
     });
   });
 }
-
-/* EMERGENCY SOS */
-function triggerSOS(){ sendSOS(); }
 
 /* AUTO SOS */
 let autoTimer,count=10;
@@ -225,12 +216,13 @@ function cancelAutoSOS(){
   autoStatus.innerHTML="Cancelled";
 }
 
-/* VOICE SOS (NOW WITH SIREN + LOCATION) */
+/* VOICE SOS – FIXED */
 function startVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   const r=new SR();
   r.onresult=e=>{
-    if(e.results[0][0].transcript.toLowerCase().includes("help")){
+    const t=e.results[0][0].transcript.toLowerCase();
+    if(t.includes("help")){
       sendSOS();
     }
   };
@@ -250,28 +242,14 @@ window.addEventListener("devicemotion",e=>{
   }
 });
 
-/* FAKE CALL */
-const fakeCallLines=[
-  "Where are you right now?",
-  "Answer me immediately.",
-  "I’m coming there.",
-  "If you don’t respond, I’ll call the police.",
-  "Stay where you are."
-];
+/* FAKE CALL – ALL SENTENCES TOGETHER */
 function fakeCall(){
   speechSynthesis.cancel();
-  speechSynthesis.speak(
-    new SpeechSynthesisUtterance(
-      fakeCallLines[Math.floor(Math.random()*fakeCallLines.length)]
-    )
-  );
-}
-
-/* FAKE VIDEO */
-function fakeVideo(){
-  speechSynthesis.speak(
-    new SpeechSynthesisUtterance("I can see you. Stay calm. Help is coming.")
-  );
+  const text=
+    "Hello. Where are you? How long will you be there? "+
+    "How quick. Everyone are waiting. "+
+    "If you are late we need to call police.";
+  speechSynthesis.speak(new SpeechSynthesisUtterance(text));
 }
 
 /* FAKE CHAT */
