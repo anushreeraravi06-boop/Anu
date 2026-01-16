@@ -69,9 +69,10 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 }
 #videoCall h2{margin-top:20px}
 .fakeVideo{
-  width:90%;height:60%;background:#222;margin:20px auto;
+  width:90%;height:60%;background:#111;margin:20px auto;
   border-radius:12px;display:flex;
-  align-items:center;justify-content:center;color:#aaa
+  align-items:center;justify-content:center;color:#777;
+  font-size:18px
 }
 </style>
 </head>
@@ -98,7 +99,7 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
     <li>Shake phone for instant alert</li>
     <li>Say “HELP” for voice SOS</li>
     <li>Use countdown if unsafe</li>
-    <li>Use fake calls to escape</li>
+    <li>Use fake call/video to escape</li>
   </ol>
 </div>
 
@@ -107,40 +108,39 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
   <div class="closeBtn" onclick="closeScreen('defenseScreen')">⬅ Close</div>
   <h2>Self-Defense & Safety Tips</h2>
   <ol>
-    <li>Stay alert at all times</li>
+    <li>Stay alert to surroundings</li>
     <li>Trust your instincts</li>
     <li>Avoid isolated places</li>
     <li>Use loud voice to attract attention</li>
     <li>Target eyes, nose, throat</li>
-    <li>Hit groin to disable attacker</li>
+    <li>Strike groin if attacked</li>
     <li>Use elbows and knees</li>
     <li>Escape immediately after striking</li>
     <li>Carry legal safety tools</li>
-    <li>Do not freeze—move fast</li>
-    <li>Keep distance when threatened</li>
+    <li>Do not freeze</li>
     <li>Run towards crowds</li>
     <li>Protect your head</li>
+    <li>Keep distance when threatened</li>
     <li>Never go silently</li>
-    <li>Use She-Shield SOS immediately</li>
+    <li>Trigger SOS immediately</li>
   </ol>
 </div>
 
-<!-- APP INFO -->
+<!-- INFO -->
 <div id="infoScreen" class="whiteScreen">
   <div class="closeBtn" onclick="closeScreen('infoScreen')">⬅ Close</div>
-  <h2>App Information</h2>
+  <h2>About She-Shield</h2>
   <p>
     She-Shield is a women safety system with multi-trigger SOS,
-    offline-aware design, and privacy-focused implementation.
+    privacy-focused design, and fast emergency response.
   </p>
 </div>
 
-<!-- CUSTOMER SERVICE -->
+<!-- SUPPORT -->
 <div id="supportScreen" class="blackScreen">
   <div class="closeBtn" onclick="closeScreen('supportScreen')">⬅ Close</div>
   <h2>Customer Service</h2>
-  <select id="issue">
-    <option value="">Select issue</option>
+  <select>
     <option>SOS not working</option>
     <option>Siren issue</option>
     <option>Location issue</option>
@@ -155,7 +155,7 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 <div id="videoCall">
   <h2>Incoming Video Call</h2>
   <p>Father</p>
-  <div class="fakeVideo">Camera Preview</div>
+  <div class="fakeVideo">📷 Live Camera</div>
   <button class="primary" onclick="endVideo()">End Call</button>
 </div>
 
@@ -167,7 +167,7 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 </header>
 
 <div class="card">
-<h3>Siren</h3>
+<h3>Siren Alert</h3>
 <button class="primary" onclick="startSiren()">🔊 Start Siren</button>
 <button class="muted" onclick="stopSiren()">Stop Siren</button>
 </div>
@@ -179,8 +179,8 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 </div>
 
 <div class="card">
-<h3>Countdown SOS</h3>
-<button class="secondary" onclick="startCountdown()">⏳ Start Countdown</button>
+<h3>Auto SOS Countdown</h3>
+<button class="secondary" onclick="startCountdown()">⏳ Start 10s Countdown</button>
 <p id="countText">Not started</p>
 </div>
 
@@ -190,7 +190,7 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 </div>
 
 <div class="card">
-<h3>Fake Call</h3>
+<h3>Fake Calls</h3>
 <button class="secondary" onclick="fakeCall()">📞 Fake Call</button>
 <button class="secondary" onclick="fakeVideo()">📹 Fake Video Call</button>
 </div>
@@ -207,8 +207,16 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 <input id="c3" placeholder="Contact 3">
 <input id="c4" placeholder="Contact 4">
 <input id="c5" placeholder="Contact 5">
-<button class="secondary" onclick="saveContacts()">Save</button>
+<button class="secondary" onclick="saveContacts()">Save Contacts</button>
 <div id="savedContacts"></div>
+</div>
+
+<!-- EMERGENCY HELPLINES (MOVED UP) -->
+<div class="card">
+<h3>Emergency Helplines</h3>
+<a href="tel:112"><button class="primary">🚔 Police 112</button></a>
+<a href="tel:181"><button class="secondary">👩 Women 181</button></a>
+<a href="tel:108"><button class="muted">🚑 Ambulance 108</button></a>
 </div>
 
 <div class="card">
@@ -216,13 +224,6 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 <button class="muted" onclick="openScreen('defenseScreen')">🥋 Self Defense</button>
 <button class="muted" onclick="openScreen('infoScreen')">ℹ App Info</button>
 <button class="muted" onclick="openScreen('supportScreen')">🛠 Support</button>
-</div>
-
-<div class="card">
-<h3>Emergency Helplines</h3>
-<a href="tel:112"><button class="primary">🚔 Police 112</button></a>
-<a href="tel:181"><button class="secondary">👩 Women 181</button></a>
-<a href="tel:108"><button class="muted">🚑 Ambulance 108</button></a>
 </div>
 
 <footer>Designed and Developed by <b>Elite 7</b></footer>
@@ -250,7 +251,8 @@ function startSiren(){
   osc1=audioCtx.createOscillator();
   osc2=audioCtx.createOscillator();
   osc1.type=osc2.type="square";
-  osc1.frequency.value=900;osc2.frequency.value=1400;
+  osc1.frequency.value=900;
+  osc2.frequency.value=1400;
   osc1.connect(audioCtx.destination);
   osc2.connect(audioCtx.destination);
   osc1.start();osc2.start();
@@ -305,23 +307,21 @@ function startVoice(){
   r.start();
 }
 
-/* FAKE CALL */
+/* FAKE CALL (MALE PREFERENCE) */
 function fakeCall(){
-  speechSynthesis.speak(
-    new SpeechSynthesisUtterance(
-      "Hello, where are you? Come immediately. Bye."
-    )
+  let u=new SpeechSynthesisUtterance(
+    "Where are you? Come immediately. I am calling the police if you delay."
   );
+  let voices=speechSynthesis.getVoices();
+  u.voice=voices.find(v=>v.name.toLowerCase().includes("male"))||voices[0];
+  u.rate=0.9;u.pitch=0.7;
+  speechSynthesis.speak(u);
 }
 
 /* FAKE VIDEO */
 function fakeVideo(){
   videoCall.style.display="block";
-  speechSynthesis.speak(
-    new SpeechSynthesisUtterance(
-      "Where are you? You must come now."
-    )
-  );
+  fakeCall();
 }
 function endVideo(){videoCall.style.display="none"}
 
