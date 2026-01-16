@@ -6,12 +6,7 @@
 <title>She-Shield</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f5efe6;
-  color:#3a2c2c
-}
+body{margin:0;font-family:Arial,sans-serif;background:#f5efe6;color:#3a2c2c}
 .container{max-width:440px;margin:auto;padding:16px}
 header{text-align:center}
 header img{width:90px}
@@ -27,89 +22,47 @@ h1{color:#e07a5f;margin:8px 0 16px}
 .card h3{color:#e07a5f;margin-top:0}
 
 button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:12px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:6px
+  width:100%;padding:14px;border:none;border-radius:12px;
+  font-size:16px;font-weight:bold;cursor:pointer;margin-top:6px
 }
 .primary{background:#e07a5f;color:#fff}
 .secondary{background:#f4a261;color:#fff}
 .muted{background:#ddd}
 
 input,select,textarea{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  margin-bottom:6px
+  width:100%;padding:10px;border-radius:8px;
+  border:1px solid #ccc;margin-bottom:6px
 }
 
 footer{text-align:center;padding:16px;color:#7a5c3a}
 
-/* ENABLE */
+/* ENABLE SCREEN */
 #enableScreen{
-  position:fixed;inset:0;
-  background:#000000cc;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999
+  position:fixed;inset:0;background:#000000cc;
+  display:flex;align-items:center;justify-content:center;z-index:9999
 }
-#enableBox{
-  background:#fffaf3;
-  padding:20px;
-  border-radius:14px;
-  text-align:center
-}
+#enableBox{background:#fffaf3;padding:20px;border-radius:14px;text-align:center}
 
-/* WHITE FULL SCREENS */
+/* WHITE SCREENS */
 .whiteScreen{
-  position:fixed;
-  inset:0;
-  background:#fffaf3;
-  color:#000;
-  display:none;
-  z-index:10000;
-  padding:20px;
-  overflow-y:auto
+  position:fixed;inset:0;background:#fffaf3;color:#000;
+  display:none;z-index:10000;padding:20px;overflow-y:auto
 }
 .whiteScreen h2{color:#e07a5f;text-align:center}
 
 .closeBtn{
-  background:#e07a5f;
-  padding:10px;
-  border-radius:10px;
-  text-align:center;
-  margin-bottom:14px;
-  font-weight:bold;
-  color:#fff
+  background:#e07a5f;padding:10px;border-radius:10px;
+  text-align:center;margin-bottom:14px;font-weight:bold;color:#fff
 }
 
-/* Fake Video Call */
+/* VIDEO CALL */
 #videoCall{
-  position:fixed;
-  inset:0;
-  background:#000;
-  color:#fff;
-  display:none;
-  z-index:11000;
-  text-align:center
+  position:fixed;inset:0;background:#000;color:#fff;
+  display:none;z-index:11000;text-align:center
 }
-#videoCall h2{margin-top:10px}
-#videoCall img{
-  width:100px;
-  border-radius:50%;
-  margin-top:10px
-}
+#videoCall img{width:100px;border-radius:50%;margin-top:10px}
 #video{
-  width:100%;
-  height:60%;
-  object-fit:cover;
-  margin-top:10px
+  width:100%;height:60%;object-fit:cover;margin-top:10px
 }
 
 #status{text-align:center;font-weight:bold}
@@ -130,10 +83,10 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 
 <!-- HOW TO USE -->
 <div id="howToScreen" class="whiteScreen">
-  <div class="closeBtn" onclick="closeScreen('howToScreen')">⬅ Close</div>
+  <div class="closeBtn" onclick="closeScreen('howToScreen')">Close</div>
   <h2>How to Use She-Shield</h2>
   <ol>
-    <li>Enable system</li>
+    <li>Enable the system</li>
     <li>Save trusted contacts</li>
     <li>Press SOS in danger</li>
     <li>Shake phone for instant alert</li>
@@ -145,39 +98,44 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 
 <!-- SELF DEFENSE -->
 <div id="defenseScreen" class="whiteScreen">
-  <div class="closeBtn" onclick="closeScreen('defenseScreen')">⬅ Close</div>
-  <h2>Self Defense & Safety Tips</h2>
+  <div class="closeBtn" onclick="closeScreen('defenseScreen')">Close</div>
+  <h2>Self-Defense & Safety Tips</h2>
   <ol>
-    <li>Stay alert</li>
-    <li>Trust instincts</li>
-    <li>Avoid isolated areas</li>
-    <li>Use loud voice</li>
-    <li>Hit eyes or nose</li>
-    <li>Strike groin</li>
-    <li>Use elbows & knees</li>
-    <li>Escape immediately</li>
-    <li>Carry safety tools</li>
-    <li>Do not freeze</li>
-    <li>Run to crowd</li>
-    <li>Protect head</li>
-    <li>Keep distance</li>
-    <li>Never go silently</li>
-    <li>Trigger SOS fast</li>
+    <li>Stay alert</li><li>Trust instincts</li><li>Avoid isolated places</li>
+    <li>Shout loudly</li><li>Target eyes</li><li>Hit nose</li>
+    <li>Strike groin</li><li>Use elbows</li><li>Escape quickly</li>
+    <li>Run to crowds</li><li>Protect head</li><li>Do not freeze</li>
+    <li>Keep distance</li><li>Carry safety tools</li>
+    <li>Trigger SOS immediately</li>
   </ol>
 </div>
 
 <!-- APP INFO -->
 <div id="infoScreen" class="whiteScreen">
-  <div class="closeBtn" onclick="closeScreen('infoScreen')">⬅ Close</div>
-  <h2>About She-Shield</h2>
+  <div class="closeBtn" onclick="closeScreen('infoScreen')">Close</div>
+  <h2>App Information</h2>
   <p>
-    She-Shield is a women safety application designed to provide
-    instant emergency response using siren, location sharing,
-    and trusted contacts while respecting user privacy.
+    She-Shield is a women safety system that provides instant SOS alerts,
+    location sharing, and emergency assistance while maintaining user privacy.
   </p>
 </div>
 
-<!-- FAKE VIDEO CALL -->
+<!-- CUSTOMER SERVICE -->
+<div id="supportScreen" class="whiteScreen">
+  <div class="closeBtn" onclick="closeScreen('supportScreen')">Close</div>
+  <h2>Customer Service</h2>
+  <select>
+    <option>Select Issue</option>
+    <option>SOS not working</option>
+    <option>Location not shared</option>
+    <option>Voice not detecting</option>
+    <option>Other</option>
+  </select>
+  <textarea placeholder="Describe your issue"></textarea>
+  <button class="secondary">Submit</button>
+</div>
+
+<!-- VIDEO CALL -->
 <div id="videoCall">
   <h2>Incoming Video Call</h2>
   <img src="mother.jpg">
@@ -195,36 +153,36 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 
 <div class="card">
 <h3>Siren Alert</h3>
-<button class="primary" onclick="startSiren()">🔊 Start Siren</button>
+<button class="primary" onclick="startSiren()">Start Siren</button>
 <button class="muted" onclick="stopSiren()">Stop Siren</button>
 </div>
 
 <div class="card">
 <h3>Emergency SOS</h3>
-<button class="primary" onclick="triggerSOS('Emergency SOS')">🚨 SOS</button>
+<button class="primary" onclick="triggerSOS()">SOS</button>
 <div id="status">Status: Ready</div>
 </div>
 
 <div class="card">
-<h3>Auto SOS Countdown</h3>
-<button class="secondary" onclick="startCountdown()">⏳ Start Countdown</button>
+<h3>Countdown SOS</h3>
+<button class="secondary" onclick="startCountdown()">Start 10s Countdown</button>
 <p id="countText">Not started</p>
 </div>
 
 <div class="card">
 <h3>Voice SOS</h3>
-<button class="secondary" onclick="startVoice()">🎙 Say “HELP”</button>
+<button class="secondary" onclick="startVoice()">Say HELP</button>
 </div>
 
 <div class="card">
-<h3>Fake Call</h3>
-<button class="secondary" onclick="fakeCall()">📞 Fake Call</button>
-<button class="secondary" onclick="fakeVideo()">📹 Fake Video Call</button>
+<h3>Fake Calls</h3>
+<button class="secondary" onclick="fakeCall()">Fake Call</button>
+<button class="secondary" onclick="fakeVideo()">Fake Video Call</button>
 </div>
 
 <div class="card">
 <h3>Live Location</h3>
-<button class="secondary" onclick="shareLocation()">📍 Share Location</button>
+<button class="secondary" onclick="shareLocation()">Share Location</button>
 </div>
 
 <div class="card">
@@ -234,22 +192,23 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 <input id="c3" placeholder="Contact 3">
 <input id="c4" placeholder="Contact 4">
 <input id="c5" placeholder="Contact 5">
-<button class="secondary" onclick="saveContacts()">Save</button>
+<button class="secondary" onclick="saveContacts()">Save Contacts</button>
 <div id="savedContacts"></div>
 </div>
 
-<!-- EMERGENCY HELPLINES (BEFORE APP INFO BUTTONS) -->
+<!-- EMERGENCY HELPLINES -->
 <div class="card">
 <h3>Emergency Helplines</h3>
-<a href="tel:112"><button class="primary">🚔 Police 112</button></a>
-<a href="tel:181"><button class="secondary">👩 Women 181</button></a>
-<a href="tel:108"><button class="muted">🚑 Ambulance 108</button></a>
+<a href="tel:112"><button class="primary">Police 112</button></a>
+<a href="tel:181"><button class="secondary">Women 181</button></a>
+<a href="tel:108"><button class="muted">Ambulance 108</button></a>
 </div>
 
 <div class="card">
-<button class="muted" onclick="openScreen('howToScreen')">📘 How to Use</button>
-<button class="muted" onclick="openScreen('defenseScreen')">🥋 Self Defense</button>
-<button class="muted" onclick="openScreen('infoScreen')">ℹ App Information</button>
+<button class="muted" onclick="openScreen('howToScreen')">How to Use</button>
+<button class="muted" onclick="openScreen('defenseScreen')">Self Defense</button>
+<button class="muted" onclick="openScreen('infoScreen')">App Information</button>
+<button class="muted" onclick="openScreen('supportScreen')">Customer Service</button>
 </div>
 
 <footer>Designed and Developed by <b>Elite 7</b></footer>
@@ -257,7 +216,7 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 </div>
 
 <script>
-let audioCtx,osc1,osc2,countdownTimer;
+let audioCtx,osc1,osc2,timer;
 
 /* ENABLE */
 function enableSystem(){
@@ -267,7 +226,7 @@ function enableSystem(){
   initShake(); loadContacts();
 }
 
-/* SCREEN */
+/* SCREENS */
 function openScreen(id){document.getElementById(id).style.display="block"}
 function closeScreen(id){document.getElementById(id).style.display="none"}
 
@@ -297,12 +256,11 @@ function loadContacts(){
 }
 
 /* SOS */
-function triggerSOS(type){
+function triggerSOS(){
   startSiren();
   status.innerText="Status: SOS ACTIVE";
-  status.className="active";
   navigator.geolocation.getCurrentPosition(p=>{
-    const msg=`HELP, I am in danger.\n${type}\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
+    const msg=`HELP, I am in danger.\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
     JSON.parse(localStorage.getItem("contacts")||"[]")
       .forEach(n=>window.open(`https://wa.me/${n}?text=${encodeURIComponent(msg)}`));
   });
@@ -310,11 +268,10 @@ function triggerSOS(type){
 
 /* COUNTDOWN */
 function startCountdown(){
-  let t=10;
-  countText.innerText="Countdown: "+t;
-  countdownTimer=setInterval(()=>{
-    t--;countText.innerText="Countdown: "+t;
-    if(t<=0){clearInterval(countdownTimer);triggerSOS("Countdown SOS")}
+  let t=10;countText.innerText=t;
+  timer=setInterval(()=>{
+    t--;countText.innerText=t;
+    if(t<=0){clearInterval(timer);triggerSOS()}
   },1000);
 }
 
@@ -324,34 +281,31 @@ function startVoice(){
   const r=new SR();
   r.onresult=e=>{
     if(e.results[0][0].transcript.toLowerCase().includes("help"))
-      triggerSOS("Voice SOS");
+      triggerSOS();
   };
   r.start();
 }
 
-/* FAKE CALL (FEMALE) */
+/* FAKE CALL */
 function fakeCall(){
   let u=new SpeechSynthesisUtterance(
     "Where are you? Why haven't you reached yet? Call me immediately."
   );
-  let voices=speechSynthesis.getVoices();
-  u.voice=voices.find(v=>v.name.toLowerCase().includes("female"))||voices[0];
-  u.rate=0.9;u.pitch=1.1;
+  let v=speechSynthesis.getVoices().find(x=>x.name.toLowerCase().includes("female"));
+  u.voice=v||speechSynthesis.getVoices()[0];
   speechSynthesis.speak(u);
 }
 
-/* FAKE VIDEO */
+/* VIDEO */
 async function fakeVideo(){
   videoCall.style.display="block";
-  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}});
   video.srcObject=stream;
   fakeCall();
 }
 function endVideo(){
   videoCall.style.display="none";
-  if(video.srcObject){
-    video.srcObject.getTracks().forEach(t=>t.stop());
-  }
+  if(video.srcObject)video.srcObject.getTracks().forEach(t=>t.stop());
 }
 
 /* SHAKE */
@@ -360,7 +314,7 @@ function initShake(){
   window.addEventListener("devicemotion",e=>{
     const a=e.accelerationIncludingGravity;
     if(Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z)>22 && Date.now()-last>2000){
-      last=Date.now();triggerSOS("Shake SOS");
+      last=Date.now();triggerSOS();
     }
   });
 }
