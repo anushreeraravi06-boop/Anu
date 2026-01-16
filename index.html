@@ -1,336 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>She-Shield</title>
+  <meta charset="UTF-8">
+  <title>Incoming Video Call</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{margin:0;font-family:Arial,sans-serif;background:#f5efe6;color:#3a2c2c}
-.container{max-width:440px;margin:auto;padding:16px}
-header{text-align:center}
-header img{width:90px}
-h1{color:#e07a5f;margin:8px 0 16px}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-.card{
-  background:#fffaf3;
-  padding:14px;
-  border-radius:14px;
-  margin-bottom:14px;
-  box-shadow:0 6px 16px rgba(0,0,0,.12)
-}
-.card h3{color:#e07a5f;margin-top:0}
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-button{
-  width:100%;padding:14px;border:none;border-radius:12px;
-  font-size:16px;font-weight:bold;cursor:pointer;margin-top:6px
-}
-.primary{background:#e07a5f;color:#fff}
-.secondary{background:#f4a261;color:#fff}
-.muted{background:#ddd}
+    .call-container {
+      min-height: 100vh;
+      text-align: center;
+      padding: 16px;
+    }
 
-input,select,textarea{
-  width:100%;padding:10px;border-radius:8px;
-  border:1px solid #ccc;margin-bottom:6px
-}
+    /* APP LOGO */
+    .app-logo {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      margin: 10px auto 5px;
+      display: block;
+    }
 
-footer{text-align:center;padding:16px;color:#7a5c3a}
+    .title {
+      font-size: 24px;
+      margin-top: 10px;
+    }
 
-/* ENABLE SCREEN */
-#enableScreen{
-  position:fixed;inset:0;background:#000000cc;
-  display:flex;align-items:center;justify-content:center;z-index:9999
-}
-#enableBox{background:#fffaf3;padding:20px;border-radius:14px;text-align:center}
+    .profile {
+      margin-top: 10px;
+    }
 
-/* WHITE SCREENS */
-.whiteScreen{
-  position:fixed;inset:0;background:#fffaf3;
-  display:none;z-index:10000;padding:20px;overflow-y:auto
-}
-.whiteScreen h2{color:#e07a5f;text-align:center}
-.closeBtn{
-  background:#e07a5f;padding:10px;border-radius:10px;
-  text-align:center;margin-bottom:14px;font-weight:bold;color:#fff
-}
+    .small-avatar {
+      width: 40px;
+      height: 40px;
+      background: #555;
+      border-radius: 50%;
+      margin: 0 auto 5px;
+    }
 
-/* VIDEO CALL */
-#videoCall{
-  position:fixed;inset:0;background:#000;color:#fff;
-  display:none;z-index:11000;text-align:center
-}
-#videoCall img{width:100px;border-radius:50%;margin-top:10px}
-#video{width:100%;height:60%;object-fit:cover;margin-top:10px}
+    .caller-name {
+      font-size: 18px;
+    }
 
-#status{text-align:center;font-weight:bold}
-</style>
+    /* Fake video frame */
+    .video-frame {
+      width: 90%;
+      max-width: 420px;
+      height: 520px;
+      margin: 20px auto;
+      background: #111;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+
+    /* Mother image as video */
+    .video-feed {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* End call button */
+    .end-call {
+      width: 80%;
+      max-width: 320px;
+      padding: 15px;
+      font-size: 18px;
+      background: #8b1a1a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .end-call:active {
+      background: #a32020;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- ENABLE -->
-<div id="enableScreen">
-  <div id="enableBox">
-    <h2>Enable Safety System</h2>
-    <p>Required for siren, camera, motion, voice & location</p>
-    <button class="primary" onclick="enableSystem()">Enable</button>
+  <div class="call-container">
+
+    <!-- APP LOGO -->
+    <img src="logo.png.jpeg" alt="App Logo" class="app-logo">
+
+    <h1 class="title">Incoming Video Call</h1>
+
+    <div class="profile">
+      <div class="small-avatar"></div>
+      <div class="caller-name">Mother</div>
+    </div>
+
+    <!-- Fake video call area -->
+    <div class="video-frame">
+      <img src="mother.jpeg" alt="Mother Video" class="video-feed">
+    </div>
+
+    <button class="end-call" onclick="endCall()">End Call</button>
+
   </div>
-</div>
 
-<!-- HOW TO USE -->
-<div id="howToScreen" class="whiteScreen">
-  <div class="closeBtn" onclick="closeScreen('howToScreen')">Close</div>
-  <h2>How to Use She-Shield</h2>
-  <ol>
-    <li>Enable safety system</li>
-    <li>Add at least 5 trusted contacts</li>
-    <li>Press SOS in danger</li>
-    <li>Shake phone to auto-trigger SOS</li>
-    <li>Say “HELP” loudly for voice SOS</li>
-    <li>Use countdown when unsafe</li>
-    <li>Use fake call or video call to escape</li>
-  </ol>
-</div>
-
-<!-- SELF DEFENSE -->
-<div id="defenseScreen" class="whiteScreen">
-  <div class="closeBtn" onclick="closeScreen('defenseScreen')">Close</div>
-  <h2>Self-Defense Tips</h2>
-  <ol>
-    <li>Stay alert</li><li>Trust instincts</li><li>Avoid isolation</li>
-    <li>Shout loudly</li><li>Aim eyes</li><li>Hit nose</li>
-    <li>Strike groin</li><li>Use elbows</li><li>Run to crowds</li>
-    <li>Protect head</li><li>Do not freeze</li><li>Keep distance</li>
-    <li>Carry safety tools</li><li>Trigger SOS fast</li>
-    <li>Break grip</li><li>Use surroundings</li>
-    <li>Stay confident</li><li>Escape early</li>
-    <li>Call for help</li><li>Stay aware</li>
-  </ol>
-</div>
-
-<!-- APP INFO -->
-<div id="infoScreen" class="whiteScreen">
-  <div class="closeBtn" onclick="closeScreen('infoScreen')">Close</div>
-  <h2>Why She-Shield?</h2>
-  <p>
-    She-Shield is designed to provide instant safety support for women during emergencies.
-  </p>
-  <p>
-    <b>Privacy:</b> The app stores contacts locally and does not upload personal data.
-  </p>
-  <p>
-    <b>Instant Response:</b> SOS, siren, voice and shake detection work in seconds.
-  </p>
-  <p>
-    <b>Discreet Protection:</b> Fake calls and video calls help escape unsafe situations.
-  </p>
-</div>
-
-<!-- CUSTOMER SERVICE -->
-<div id="supportScreen" class="whiteScreen">
-  <div class="closeBtn" onclick="closeScreen('supportScreen')">Close</div>
-  <h2>Customer Issues</h2>
-  <select>
-    <option>Select Issue</option>
-    <option>SOS not working</option>
-    <option>Siren issue</option>
-    <option>Voice SOS issue</option>
-    <option>Location not shared</option>
-    <option>Fake call not working</option>
-    <option>Other</option>
-  </select>
-  <textarea placeholder="Describe your issue"></textarea>
-  <button class="secondary">Submit</button>
-</div>
-
-<!-- VIDEO CALL -->
-<div id="videoCall">
-  <h2>Incoming Video Call</h2>
-  <img src="mother_image.jpg">
-  <p>Mother</p>
-  <video id="video" autoplay muted></video>
-  <button class="primary" onclick="endVideo()">End Call</button>
-</div>
-
-<div class="container">
-
-<header>
-  <img src="app_logo.png">
-  <h1>She-Shield</h1>
-</header>
-
-<div class="card">
-<h3>Siren Alert</h3>
-<button class="primary" onclick="startSiren()">Start Siren</button>
-<button class="muted" onclick="stopSiren()">Stop Siren</button>
-</div>
-
-<div class="card">
-<h3>Emergency SOS</h3>
-<button class="primary" onclick="triggerSOS()">SOS</button>
-<div id="status">Status: Ready</div>
-</div>
-
-<div class="card">
-<h3>Countdown SOS</h3>
-<button class="secondary" onclick="startCountdown()">Start 10s Countdown</button>
-<p id="countText">Not started</p>
-</div>
-
-<div class="card">
-<h3>Voice SOS</h3>
-<button class="secondary" onclick="startVoice()">Say HELP</button>
-</div>
-
-<div class="card">
-<h3>Fake Calls</h3>
-<button class="secondary" onclick="fakeCall()">Fake Call</button>
-<button class="secondary" onclick="fakeVideo()">Fake Video Call</button>
-</div>
-
-<div class="card">
-<h3>Live Location</h3>
-<button class="secondary" onclick="shareLocation()">Share Location</button>
-</div>
-
-<div class="card">
-<h3>Trusted Contacts (Min 5)</h3>
-<input id="c1" placeholder="Contact 1">
-<input id="c2" placeholder="Contact 2">
-<input id="c3" placeholder="Contact 3">
-<input id="c4" placeholder="Contact 4">
-<input id="c5" placeholder="Contact 5">
-<button class="secondary" onclick="saveContacts()">Save Contacts</button>
-<div id="savedContacts"></div>
-</div>
-
-<div class="card">
-<h3>Emergency Helplines</h3>
-<a href="tel:112"><button class="primary">Police 112</button></a>
-<a href="tel:181"><button class="secondary">Women 181</button></a>
-<a href="tel:108"><button class="muted">Ambulance 108</button></a>
-</div>
-
-<div class="card">
-<button class="muted" onclick="openScreen('howToScreen')">How to Use</button>
-<button class="muted" onclick="openScreen('defenseScreen')">Self Defense</button>
-<button class="muted" onclick="openScreen('infoScreen')">App Information</button>
-<button class="muted" onclick="openScreen('supportScreen')">Customer Issues</button>
-</div>
-
-<footer>Designed and Developed by <b>Elite 7</b></footer>
-
-</div>
-
-<script>
-let audioCtx,osc1,osc2,timer;
-
-/* ENABLE */
-function enableSystem(){
-  audioCtx=new (window.AudioContext||webkitAudioContext)();
-  audioCtx.resume();
-  enableScreen.style.display="none";
-  initShake(); loadContacts();
-}
-
-/* SCREENS */
-function openScreen(id){document.getElementById(id).style.display="block"}
-function closeScreen(id){document.getElementById(id).style.display="none"}
-
-/* SIREN */
-function startSiren(){
-  stopSiren();
-  osc1=audioCtx.createOscillator();
-  osc2=audioCtx.createOscillator();
-  osc1.type=osc2.type="square";
-  osc1.frequency.value=900;
-  osc2.frequency.value=1400;
-  osc1.connect(audioCtx.destination);
-  osc2.connect(audioCtx.destination);
-  osc1.start();osc2.start();
-}
-function stopSiren(){if(osc1)osc1.stop();if(osc2)osc2.stop()}
-
-/* CONTACTS */
-function saveContacts(){
-  const arr=[c1.value,c2.value,c3.value,c4.value,c5.value].filter(x=>x);
-  localStorage.setItem("contacts",JSON.stringify(arr));
-  loadContacts();
-}
-function loadContacts(){
-  const arr=JSON.parse(localStorage.getItem("contacts")||"[]");
-  savedContacts.innerText=arr.length?"Saved: "+arr.join(", "):"No contacts saved";
-}
-
-/* SOS */
-function triggerSOS(){
-  startSiren();
-  status.innerText="Status: SOS ACTIVE";
-  navigator.geolocation.getCurrentPosition(p=>{
-    const msg=`HELP! I am in danger.\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
-    JSON.parse(localStorage.getItem("contacts")||"[]")
-      .forEach(n=>window.open(`https://wa.me/${n}?text=${encodeURIComponent(msg)}`));
-  });
-}
-
-/* COUNTDOWN */
-function startCountdown(){
-  let t=10;countText.innerText=t;
-  timer=setInterval(()=>{
-    t--;countText.innerText=t;
-    if(t<=0){clearInterval(timer);triggerSOS()}
-  },1000);
-}
-
-/* VOICE */
-function startVoice(){
-  const SR=window.SpeechRecognition||webkitSpeechRecognition;
-  const r=new SR();
-  r.onresult=e=>{
-    if(e.results[0][0].transcript.toLowerCase().includes("help"))
-      triggerSOS();
-  };
-  r.start();
-}
-
-/* FAKE CALL */
-function fakeCall(){
-  let u=new SpeechSynthesisUtterance(
-    "Where are you? Why are you not responding? Call me now."
-  );
-  speechSynthesis.speak(u);
-}
-
-/* VIDEO */
-async function fakeVideo(){
-  videoCall.style.display="block";
-  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}});
-  video.srcObject=stream;
-  fakeCall();
-}
-function endVideo(){
-  videoCall.style.display="none";
-  if(video.srcObject)video.srcObject.getTracks().forEach(t=>t.stop());
-}
-
-/* SHAKE */
-function initShake(){
-  let last=0;
-  window.addEventListener("devicemotion",e=>{
-    const a=e.accelerationIncludingGravity;
-    if(Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z)>22 && Date.now()-last>2000){
-      last=Date.now();triggerSOS();
+  <script>
+    function endCall() {
+      alert("Call Ended");
+      location.reload();
     }
-  });
-}
-
-/* LOCATION */
-function shareLocation(){
-  navigator.geolocation.getCurrentPosition(p=>{
-    window.open(`https://wa.me/?text=HELP!\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`);
-  });
-}
-</script>
+  </script>
 
 </body>
 </html>
