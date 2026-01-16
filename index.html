@@ -66,21 +66,8 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
   text-align:center
 }
 
-/* BLACK FULL SCREENS */
-.fullscreen{
-  position:fixed;
-  inset:0;
-  background:#000;
-  color:#fff;
-  display:none;
-  z-index:10000;
-  padding:20px;
-  overflow-y:auto
-}
-.fullscreen h2{color:#f4a261;text-align:center}
-
-/* WHITE INFO SCREEN */
-.infoScreen{
+/* WHITE FULL SCREENS (INFO + HOW TO USE) */
+.whiteScreen{
   position:fixed;
   inset:0;
   background:#fffaf3;
@@ -90,7 +77,20 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
   padding:20px;
   overflow-y:auto
 }
-.infoScreen h2{color:#e07a5f;text-align:center}
+.whiteScreen h2{color:#e07a5f;text-align:center}
+
+/* BLACK FULL SCREEN (SUPPORT ONLY) */
+.blackScreen{
+  position:fixed;
+  inset:0;
+  background:#000;
+  color:#fff;
+  display:none;
+  z-index:10000;
+  padding:20px;
+  overflow-y:auto
+}
+.blackScreen h2{color:#f4a261;text-align:center}
 
 .closeBtn{
   background:#e07a5f;
@@ -118,49 +118,49 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
   </div>
 </div>
 
-<!-- HOW TO USE (BLACK) -->
-<div id="howToScreen" class="fullscreen">
+<!-- HOW TO USE (WHITE) -->
+<div id="howToScreen" class="whiteScreen">
   <div class="closeBtn" onclick="closeScreen('howToScreen')">⬅ Close</div>
   <h2>How to Use She-Shield</h2>
   <ol>
     <li>Enable the safety system</li>
-    <li>Save trusted contacts</li>
-    <li>Use Emergency SOS when needed</li>
+    <li>Save at least one trusted contact</li>
+    <li>Press Emergency SOS if in danger</li>
     <li>Shake phone for instant SOS</li>
     <li>Say “HELP” for voice SOS</li>
-    <li>Use countdown if feeling unsafe</li>
-    <li>Fake call to escape uncomfortable situations</li>
+    <li>Use countdown if you feel unsafe</li>
+    <li>Use fake call to escape uncomfortable situations</li>
   </ol>
 </div>
 
 <!-- APP INFO (WHITE) -->
-<div id="infoScreen" class="infoScreen">
+<div id="infoScreen" class="whiteScreen">
   <div class="closeBtn" onclick="closeScreen('infoScreen')">⬅ Close</div>
   <h2>App Information</h2>
 
   <h3>Why She-Shield is Different</h3>
   <ul>
     <li>Multiple SOS triggers</li>
-    <li>Offline-resilient design</li>
-    <li>User-focused safety flow</li>
+    <li>Offline-resilient safety flow</li>
+    <li>User-focused emergency design</li>
   </ul>
 
   <h3>Privacy & Ethics</h3>
   <p>
-    No data is stored on external servers.<br>
-    Contacts and logs remain on the device.<br>
+    No personal data is stored on servers.<br>
+    Contacts remain on the user’s device.<br>
     Location is shared only during emergencies.
   </p>
 
   <h3>Impact & Relevance</h3>
   <p>
-    Faster emergency response reduces harm.<br>
-    Designed for real-world women safety needs.
+    Faster alerts reduce response time.<br>
+    Designed for real-world women safety scenarios.
   </p>
 </div>
 
 <!-- CUSTOMER SERVICE (BLACK) -->
-<div id="supportScreen" class="fullscreen">
+<div id="supportScreen" class="blackScreen">
   <div class="closeBtn" onclick="closeScreen('supportScreen')">⬅ Close</div>
   <h2>Customer Service</h2>
 
@@ -193,7 +193,7 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 
 <div class="card">
 <h3>Emergency SOS</h3>
-<button class="primary" onclick="triggerSOS('Button SOS')">🚨 Emergency SOS</button>
+<button class="primary" onclick="triggerSOS('Emergency SOS')">🚨 Emergency SOS</button>
 <div id="status">Status: Ready</div>
 </div>
 
@@ -299,7 +299,7 @@ function sendSOS(type){
   const arr=JSON.parse(localStorage.getItem("contacts")||"[]");
   if(!arr.length)return;
   navigator.geolocation.getCurrentPosition(p=>{
-    const msg=`HELP!\n${type}\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
+    const msg=`HELP, I am in danger.\n${type}\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
     arr.forEach(n=>window.open(`https://wa.me/${n}?text=${encodeURIComponent(msg)}`));
   });
 }
@@ -348,7 +348,7 @@ function initShake(){
 /* LOCATION */
 function shareLocation(){
   navigator.geolocation.getCurrentPosition(p=>{
-    window.open(`https://wa.me/?text=My location: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`);
+    window.open(`https://wa.me/?text=HELP, I am in danger.\nMy location: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`);
   });
 }
 
