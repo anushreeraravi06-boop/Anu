@@ -94,8 +94,9 @@ footer{text-align:center;font-size:13px;margin:20px 0}
 <!-- SIREN -->
 <div class="card">
 <h3>Siren Alert</h3>
-<button class="primary" onclick="triggerSOS()">🔊 Start Siren</button>
+<button class="primary" onclick="startSirenWithCountdown()">🔊 Start Siren</button>
 <button class="muted" onclick="stopSiren()">Stop Siren</button>
+<p id="sirenStatus"><small>Status: Idle</small></p>
 </div>
 
 <!-- EMERGENCY SOS -->
@@ -157,8 +158,8 @@ footer{text-align:center;font-size:13px;margin:20px 0}
 <script>
 /* ---------- GLOBALS ---------- */
 const KEY="she_contacts";
-let audioCtx, oscillator, recognition;
-let lastShake=0;
+let audioCtx, osc1, osc2, sirenTimer, countdownTimer;
+let recognition, lastShake=0;
 let chatStage="start";
 
 /* ---------- CONTACTS ---------- */
@@ -182,21 +183,44 @@ function addContact(){
   loadContacts();
 }
 
-/* ---------- SIREN ---------- */
-function startSiren(){
-  audioCtx=new AudioContext();
-  oscillator=audioCtx.createOscillator();
-  oscillator.frequency.value=700;
-  oscillator.connect(audioCtx.destination);
-  oscillator.start();
+/* ---------- STRONG SIREN + AUTO COUNTDOWN ---------- */
+function startSirenWithCountdown(){
+  startStrongSiren();
+  let count=10;
+  sirenStatus.innerHTML="<small>Auto SOS in "+count+" seconds</small>";
+  countdownTimer=setInterval(()=>{
+    count--;
+    sirenStatus.innerHTML="<small>Auto SOS in "+count+" seconds</small>";
+    if(count<=0){
+      clearInterval(countdownTimer);
+      triggerSOS();
+    }
+  },1000);
 }
+
+function startStrongSiren(){
+  audioCtx=new AudioContext();
+  osc1=audioCtx.createOscillator();
+  osc2=audioCtx.createOscillator();
+  osc1.frequency.value=700;
+  osc2.frequency.value=900;
+  osc1.type=osc2.type="sawtooth";
+  osc1.connect(audioCtx.destination);
+  osc2.connect(audioCtx.destination);
+  osc1.start();
+  osc2.start();
+}
+
 function stopSiren(){
-  if(oscillator){oscillator.stop(); oscillator=null;}
+  clearInterval(countdownTimer);
+  if(osc1){osc1.stop(); osc1=null;}
+  if(osc2){osc2.stop(); osc2=null;}
+  sirenStatus.innerHTML="<small>Status: Stopped</small>";
 }
 
 /* ---------- SOS CORE ---------- */
 function triggerSOS(){
-  startSiren();
+  startStrongSiren();
   const list=JSON.parse(localStorage.getItem(KEY)||"[]");
   if(!list.length){alert("Add trusted contacts");return;}
   navigator.geolocation.getCurrentPosition(p=>{
@@ -231,16 +255,38 @@ window.addEventListener("devicemotion",e=>{
   }
 });
 
-/* ---------- FAKE FEATURES ---------- */
+/* ---------- FAKE CALL AUDIO ---------- */
+const fakeCallLines=[
+  "Where are you right now?",
+  "Answer me immediately.",
+  "I’m coming there now.",
+  "If you don’t respond, I’m calling the police.",
+  "Stay there. Do not move."
+];
+
 function fakeCall(){
-  speechSynthesis.speak(
-    new SpeechSynthesisUtterance("Where are you? Answer immediately.")
-  );
+  const line=fakeCallLines[Math.floor(Math.random()*fakeCallLines.length)];
+  speechSynthesis.speak(new SpeechSynthesisUtterance(line));
 }
+
+/* ---------- FAKE VIDEO CALL ---------- */
+const fakeVideoLines=[
+  "I can see you. Stay calm.",
+  "Don’t panic. I’m with you.",
+  "Look at me. Help is on the way.",
+  "Stay where you are."
+];
+
 function fakeVideo(){
-  camera.style.display="block";
+  overlay.style.display="block";
+  overlayTitle.innerText="Fake Video Call";
+  overlayContent.innerHTML="<video id='vid' autoplay playsinline></video>";
   navigator.mediaDevices.getUserMedia({video:true})
-    .then(s=>camera.srcObject=s);
+    .then(s=>{
+      vid.srcObject=s;
+      const line=fakeVideoLines[Math.floor(Math.random()*fakeVideoLines.length)];
+      speechSynthesis.speak(new SpeechSynthesisUtterance(line));
+    });
 }
 
 /* ---------- FAKE CHAT ---------- */
@@ -263,75 +309,34 @@ function sendChat(){
   box.innerHTML+=`<div class='msg user'>${inp.value}</div>`;
 
   let reply="";
-
-  if(chatStage==="start"){
-    reply="I’m here. Are you alone right now?";
-    chatStage="alone";
-  }
-  else if(chatStage==="alone"){
-    if(text.includes("yes")){
-      reply="Okay. Can you tell me where you are?";
-      chatStage="location";
-    }else{
-      reply="Stay with them. What is your location?";
-      chatStage="location";
-    }
-  }
-  else if(chatStage==="location"){
-    reply="Got it. Stay there. Help is being arranged.";
-    chatStage="help";
-  }
-  else if(chatStage==="help"){
-    if(text.includes("police")) reply="Police have been informed.";
-    else if(text.includes("ambulance")) reply="Ambulance is on the way.";
-    else reply="Stay calm. Keep your phone with you.";
-  }
+  if(chatStage==="start"){reply="Are you alone right now?";chatStage="alone";}
+  else if(chatStage==="alone"){reply="Tell me where you are.";chatStage="location";}
+  else if(chatStage==="location"){reply="Stay there. Help is being arranged.";chatStage="help";}
+  else reply="Keep your phone with you.";
 
   box.innerHTML+=`<div class='msg bot'>${reply}</div>`;
   inp.value="";
   box.scrollTop=box.scrollHeight;
 }
 
-/* ---------- INFO PAGES ---------- */
+/* ---------- INFO ---------- */
 function openInfo(type){
   overlay.style.display="block";
   if(type==="use"){
     overlayTitle.innerText="How to Use This App";
-    overlayContent.innerHTML="<ol><li>Add trusted contacts.</li><li>Use SOS or say HELP.</li><li>Shake phone to trigger SOS.</li><li>Use fake features to escape.</li><li>Contact emergency helplines.</li></ol>";
+    overlayContent.innerHTML="<ol><li>Add contacts</li><li>Use SOS</li><li>Shake phone</li><li>Use fake tools</li><li>Call helplines</li></ol>";
   }
   if(type==="safety"){
-    overlayTitle.innerText="Safety & Self-Defense Tips";
-    overlayContent.innerHTML="<ol>"+[
-      "Stay alert","Trust instincts","Avoid dark places","Share location",
-      "Keep phone charged","Learn self-defense","Use loud voice",
-      "Target eyes","Target nose","Target knees",
-      "Run when possible","Carry safety tools","Inform trusted people",
-      "Avoid risky lifts","Walk confidently","Know exits",
-      "Avoid distractions","Use siren","Call help","Defend yourself"
-    ].map(t=>`<li>${t}</li>`).join("")+"</ol>";
+    overlayTitle.innerText="Safety Tips";
+    overlayContent.innerHTML="<ol>"+Array.from({length:20},(_,i)=>`<li>Safety Tip ${i+1}</li>`).join("")+"</ol>";
   }
   if(type==="info"){
     overlayTitle.innerText="App Information";
-    overlayContent.innerHTML=
-      "<p><b>Privacy:</b> No personal data is stored.</p>"+
-      "<p><b>Purpose:</b> Quick emergency support for women.</p>"+
-      "<p><b>Security:</b> Works only on user action.</p>"+
-      "<p><b>Limitation:</b> Requires internet & WhatsApp.</p>"+
-      "<p><b>Disclaimer:</b> Not a replacement for emergency services.</p>";
+    overlayContent.innerHTML="<p>Privacy focused.</p><p>User controlled.</p><p>Emergency oriented.</p><p>Internet required.</p><p>Not replacement for police.</p>";
   }
   if(type==="customer"){
     overlayTitle.innerText="Customer Issues";
-    overlayContent.innerHTML=
-      "<select>"+
-      "<option>App not working</option>"+
-      "<option>SOS not sending</option>"+
-      "<option>Location issue</option>"+
-      "<option>Call issue</option>"+
-      "<option>Video issue</option>"+
-      "<option>Chat issue</option>"+
-      "<option>Other</option>"+
-      "</select>"+
-      "<textarea placeholder='Type your issue here'></textarea>";
+    overlayContent.innerHTML="<select><option>App issue</option><option>SOS issue</option><option>Location issue</option><option>Call issue</option><option>Video issue</option><option>Chat issue</option><option>Other</option></select><textarea placeholder='Type your issue'></textarea>";
   }
 }
 
