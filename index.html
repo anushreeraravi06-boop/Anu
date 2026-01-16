@@ -50,7 +50,7 @@ input,select,textarea{
 
 footer{text-align:center;padding:16px;color:#7a5c3a}
 
-/* Enable */
+/* ENABLE SCREEN */
 #enableScreen{
   position:fixed;inset:0;
   background:#000000cc;
@@ -66,7 +66,7 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
   text-align:center
 }
 
-/* FULL SCREENS */
+/* BLACK FULL SCREENS */
 .fullscreen{
   position:fixed;
   inset:0;
@@ -78,14 +78,32 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
   overflow-y:auto
 }
 .fullscreen h2{color:#f4a261;text-align:center}
+
+/* WHITE INFO SCREEN */
+.infoScreen{
+  position:fixed;
+  inset:0;
+  background:#fffaf3;
+  color:#3a2c2c;
+  display:none;
+  z-index:10000;
+  padding:20px;
+  overflow-y:auto
+}
+.infoScreen h2{color:#e07a5f;text-align:center}
+
 .closeBtn{
   background:#e07a5f;
   padding:10px;
   border-radius:10px;
   text-align:center;
-  margin-bottom:14px
+  margin-bottom:14px;
+  font-weight:bold;
+  color:#fff
 }
-.active{color:red;font-weight:bold}
+
+#status{text-align:center;font-weight:bold}
+.active{color:red}
 </style>
 </head>
 
@@ -100,32 +118,64 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
   </div>
 </div>
 
-<!-- INFO SCREEN -->
-<div id="infoScreen" class="fullscreen">
-  <div class="closeBtn" onclick="closeInfo()">⬅ Close</div>
-  <h2>She-Shield – App Information</h2>
+<!-- HOW TO USE (BLACK) -->
+<div id="howToScreen" class="fullscreen">
+  <div class="closeBtn" onclick="closeScreen('howToScreen')">⬅ Close</div>
+  <h2>How to Use She-Shield</h2>
+  <ol>
+    <li>Enable the safety system</li>
+    <li>Save trusted contacts</li>
+    <li>Use Emergency SOS when needed</li>
+    <li>Shake phone for instant SOS</li>
+    <li>Say “HELP” for voice SOS</li>
+    <li>Use countdown if feeling unsafe</li>
+    <li>Fake call to escape uncomfortable situations</li>
+  </ol>
+</div>
+
+<!-- APP INFO (WHITE) -->
+<div id="infoScreen" class="infoScreen">
+  <div class="closeBtn" onclick="closeScreen('infoScreen')">⬅ Close</div>
+  <h2>App Information</h2>
 
   <h3>Why She-Shield is Different</h3>
   <ul>
-    <li>Multiple SOS triggers (Button, Shake, Voice, Countdown)</li>
-    <li>Offline SOS fallback</li>
-    <li>Incident logging</li>
-    <li>Designed for panic situations</li>
+    <li>Multiple SOS triggers</li>
+    <li>Offline-resilient design</li>
+    <li>User-focused safety flow</li>
   </ul>
 
   <h3>Privacy & Ethics</h3>
   <p>
-  No data is stored on external servers.<br>
-  Contacts and logs remain on the user’s device.<br>
-  Location is shared only during emergencies.
+    No data is stored on external servers.<br>
+    Contacts and logs remain on the device.<br>
+    Location is shared only during emergencies.
   </p>
 
   <h3>Impact & Relevance</h3>
   <p>
-  Immediate alerts reduce response time.<br>
-  Designed for real-world safety scenarios.<br>
-  Focused on prevention and rapid help.
+    Faster emergency response reduces harm.<br>
+    Designed for real-world women safety needs.
   </p>
+</div>
+
+<!-- CUSTOMER SERVICE (BLACK) -->
+<div id="supportScreen" class="fullscreen">
+  <div class="closeBtn" onclick="closeScreen('supportScreen')">⬅ Close</div>
+  <h2>Customer Service</h2>
+
+  <select id="issue">
+    <option value="">Select an issue</option>
+    <option>SOS not working</option>
+    <option>Siren sound issue</option>
+    <option>Location not shared</option>
+    <option>Voice SOS not detecting</option>
+    <option>Other</option>
+  </select>
+
+  <textarea id="issueText" placeholder="Describe your issue (optional)"></textarea>
+  <button class="secondary" onclick="submitIssue()">Submit Issue</button>
+  <p id="supportStatus"></p>
 </div>
 
 <div class="container">
@@ -155,7 +205,7 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 
 <div class="card">
 <h3>Voice SOS</h3>
-<button class="secondary" onclick="startVoice()">🎙️ Say “HELP”</button>
+<button class="secondary" onclick="startVoice()">🎙 Say “HELP”</button>
 </div>
 
 <div class="card">
@@ -179,28 +229,12 @@ footer{text-align:center;padding:16px;color:#7a5c3a}
 <div id="savedContacts"></div>
 </div>
 
-<!-- CUSTOMER SERVICE -->
 <div class="card">
-<h3>Customer Service</h3>
-<select id="issue">
-  <option value="">Select an issue</option>
-  <option>SOS not working</option>
-  <option>Siren sound issue</option>
-  <option>Location not shared</option>
-  <option>Voice SOS not detecting</option>
-  <option>Other</option>
-</select>
-<textarea id="issueText" placeholder="Describe your issue (optional)"></textarea>
-<button class="muted" onclick="submitIssue()">Submit Issue</button>
-<p id="supportStatus"></p>
+<button class="muted" onclick="openScreen('howToScreen')">📘 How to Use App</button>
+<button class="muted" onclick="openScreen('infoScreen')">ℹ App Information</button>
+<button class="muted" onclick="openScreen('supportScreen')">🛠 Customer Service</button>
 </div>
 
-<!-- INFO BUTTON -->
-<div class="card">
-<button class="muted" onclick="openInfo()">ℹ️ App Information</button>
-</div>
-
-<!-- HELPLINES -->
 <div class="card">
 <h3>Emergency Helplines</h3>
 <a href="tel:112"><button class="primary">🚔 Police 112</button></a>
@@ -225,6 +259,10 @@ function enableSystem(){
   initShake(); loadContacts();
 }
 
+/* SCREEN CONTROL */
+function openScreen(id){document.getElementById(id).style.display="block"}
+function closeScreen(id){document.getElementById(id).style.display="none"}
+
 /* SIREN */
 function startSiren(){
   stopSiren();
@@ -237,7 +275,7 @@ function startSiren(){
   osc2.connect(audioCtx.destination);
   osc1.start();osc2.start();
 }
-function stopSiren(){if(osc1)osc1.stop();if(osc2)osc2.stop();}
+function stopSiren(){if(osc1)osc1.stop();if(osc2)osc2.stop()}
 
 /* CONTACTS */
 function saveContacts(){
@@ -253,7 +291,7 @@ function loadContacts(){
 /* SOS */
 function triggerSOS(type){
   startSiren();
-  status.innerHTML="Status: SOS ACTIVE";
+  status.innerText="Status: SOS ACTIVE";
   status.className="active";
   sendSOS(type);
 }
@@ -272,7 +310,7 @@ function startCountdown(){
   countText.innerText="Countdown: "+t;
   countdownTimer=setInterval(()=>{
     t--; countText.innerText="Countdown: "+t;
-    if(t<=0){clearInterval(countdownTimer);triggerSOS("Countdown SOS");}
+    if(t<=0){clearInterval(countdownTimer);triggerSOS("Countdown SOS")}
   },1000);
 }
 
@@ -291,7 +329,7 @@ function startVoice(){
 function fakeCall(){
   speechSynthesis.speak(
     new SpeechSynthesisUtterance(
-      "Hello, where are you? Ministers and senior officials are waiting. Come immediately. Bye."
+      "Hello, where are you? Ministers and officials are waiting. Come immediately. Bye."
     )
   );
 }
@@ -302,8 +340,7 @@ function initShake(){
   window.addEventListener("devicemotion",e=>{
     const a=e.accelerationIncludingGravity;
     if(Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z)>22 && Date.now()-last>2000){
-      last=Date.now();
-      triggerSOS("Shake SOS");
+      last=Date.now(); triggerSOS("Shake SOS");
     }
   });
 }
@@ -314,10 +351,6 @@ function shareLocation(){
     window.open(`https://wa.me/?text=My location: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`);
   });
 }
-
-/* INFO */
-function openInfo(){infoScreen.style.display="block";}
-function closeInfo(){infoScreen.style.display="none";}
 
 /* SUPPORT */
 function submitIssue(){
