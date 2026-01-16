@@ -97,7 +97,7 @@ footer{text-align:center;font-size:13px;margin:20px 0}
 <div id="enableScreen">
   <div id="enableBox">
     <h3>Enable Safety System</h3>
-    <p>Required for SOS, voice, shake & location.</p>
+    <p>This allows location, microphone, motion and siren features.</p>
     <button class="primary" onclick="enableSystem()">Enable</button>
   </div>
 </div>
@@ -293,7 +293,7 @@ function fakeCall(){
   ));
 }
 
-/* FAKE CHAT – SMART */
+/* FAKE CHAT */
 function openFakeChat(){
   overlay.style.display="block";
   overlayTitle.innerText="Fake Chat";
@@ -342,21 +342,61 @@ function sendChatMsg(){
 /* INFO */
 function openInfo(type){
   overlay.style.display="block";
+
   if(type==="use"){
     overlayTitle.innerText="How to Use App";
-    overlayContent.innerHTML="<ol><li>Enable safety system</li><li>Add trusted contacts</li><li>Use SOS, Voice or Shake</li><li>Auto SOS if unable</li><li>Use fake call/chat to escape</li></ol>";
+    overlayContent.innerHTML="<ol><li>Enable safety system</li><li>Add trusted contacts</li><li>Use SOS, Voice or Shake SOS</li><li>Auto SOS triggers if inactive</li><li>Use fake call or chat to escape</li></ol>";
   }
+
   if(type==="safety"){
-    overlayTitle.innerText="Self-Defence Tips";
-    overlayContent.innerHTML="<ol>"+Array.from({length:20},(_,i)=>`<li>Safety tip ${i+1}</li>`).join("")+"</ol>";
+    overlayTitle.innerText="Self-Defence & Safety Tips";
+    overlayContent.innerHTML="<ol>"+
+      "<li>Trust your instincts always.</li>"+
+      "<li>Stay alert to surroundings.</li>"+
+      "<li>Avoid isolated areas.</li>"+
+      "<li>Share your live location.</li>"+
+      "<li>Walk confidently.</li>"+
+      "<li>Use loud voice to attract attention.</li>"+
+      "<li>Aim for eyes during attack.</li>"+
+      "<li>Strike nose to disorient.</li>"+
+      "<li>Hit knees to escape.</li>"+
+      "<li>Run as soon as possible.</li>"+
+      "<li>Keep phone charged.</li>"+
+      "<li>Inform someone of your plans.</li>"+
+      "<li>Avoid headphones at night.</li>"+
+      "<li>Stay in well-lit places.</li>"+
+      "<li>Learn basic self-defence.</li>"+
+      "<li>Know emergency numbers.</li>"+
+      "<li>Carry legal safety tools.</li>"+
+      "<li>Lock doors properly.</li>"+
+      "<li>Report suspicious behaviour.</li>"+
+      "<li>Believe you deserve safety.</li>"+
+      "</ol>";
   }
+
   if(type==="info"){
     overlayTitle.innerText="App Information";
-    overlayContent.innerHTML="<p>Purpose, Privacy, Permissions, Reliability, Disclaimer.</p>";
+    overlayContent.innerHTML=
+      "<p><b>Purpose:</b> She-Shield is designed to help women respond quickly during emergencies.</p>"+
+      "<p><b>Privacy:</b> No personal data is stored or sent to servers.</p>"+
+      "<p><b>Permissions:</b> Location, microphone and motion are used only during SOS.</p>"+
+      "<p><b>Reliability:</b> Best performance on real mobile devices.</p>"+
+      "<p><b>Disclaimer:</b> This app assists emergencies but does not replace authorities.</p>";
   }
+
   if(type==="customer"){
     overlayTitle.innerText="Customer Issues";
-    overlayContent.innerHTML="<select><option>SOS issue</option><option>Location issue</option><option>Voice/Shake issue</option><option>Performance issue</option><option>Other</option></select><textarea placeholder='Describe issue'></textarea>";
+    overlayContent.innerHTML=
+      "<select>"+
+      "<option>SOS not working</option>"+
+      "<option>Location sharing issue</option>"+
+      "<option>Voice SOS problem</option>"+
+      "<option>Shake SOS problem</option>"+
+      "<option>App performance issue</option>"+
+      "<option>Notification issue</option>"+
+      "<option>Other</option>"+
+      "</select>"+
+      "<textarea placeholder='Describe your issue here'></textarea>";
   }
 }
 function closeOverlay(){overlay.style.display="none";}
