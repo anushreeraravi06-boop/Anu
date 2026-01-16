@@ -17,10 +17,8 @@ body{
   margin:auto;
   padding:16px;
 }
-h1{
-  text-align:center;
-  color:#e07a5f;
-}
+h1{text-align:center;color:#e07a5f}
+
 .step{
   background:#fffaf3;
   padding:14px;
@@ -28,10 +26,8 @@ h1{
   margin-bottom:14px;
   box-shadow:0 6px 16px rgba(0,0,0,.08);
 }
-.step h3{
-  margin:0 0 8px;
-  color:#e07a5f;
-}
+.step h3{margin:0 0 8px;color:#e07a5f}
+
 button{
   width:100%;
   padding:14px;
@@ -41,11 +37,11 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
-.primary{background:#e07a5f;color:white;}
-.secondary{background:#f4a261;color:white;}
-.muted{background:#eee;}
+.primary{background:#e07a5f;color:white}
+.secondary{background:#f4a261;color:white}
+.muted{background:#eee}
 
-input, textarea, select{
+input, textarea{
   width:100%;
   padding:10px;
   margin-top:8px;
@@ -53,39 +49,28 @@ input, textarea, select{
   border:1px solid #ccc;
 }
 
-video{
-  width:100%;
-  border-radius:12px;
-  margin-top:10px;
-}
-
-footer{
-  text-align:center;
-  font-size:13px;
-  margin:20px 0;
-}
-
-#infoScreen{
+#overlay{
   position:fixed;
   inset:0;
-  background:#ffffff;
+  background:white;
   padding:20px;
-  overflow:auto;
   display:none;
+  overflow:auto;
   z-index:9999;
 }
 
 .chatBox{
-  background:#f9f9f9;
-  border-radius:10px;
+  border:1px solid #ccc;
   padding:10px;
-  height:240px;
+  border-radius:10px;
+  height:220px;
   overflow:auto;
-  margin-bottom:10px;
 }
-.msg{margin:6px 0;}
-.bot{color:#e07a5f;}
-.user{color:#000;}
+.msg{margin:6px 0}
+.bot{color:#e07a5f}
+.user{color:#000}
+
+footer{text-align:center;font-size:13px;margin:20px 0}
 </style>
 </head>
 
@@ -97,111 +82,96 @@ footer{
 <!-- TRUSTED CONTACTS -->
 <div class="step">
 <h3>Trusted Contacts (Max 5)</h3>
-<input id="tcName" placeholder="Contact Name">
-<input id="tcPhone" placeholder="Phone with country code">
-<button class="secondary" onclick="addContact()">Add Contact</button>
-<div id="contactList"><small>No contacts saved</small></div>
+<input id="cName" placeholder="Contact Name">
+<input id="cPhone" placeholder="Phone with country code">
+<button class="secondary" onclick="addContact()">Save Contact</button>
+<div id="contactList"></div>
 </div>
 
+<!-- SIREN -->
 <div class="step">
 <h3>Siren Alert</h3>
 <button class="primary" onclick="triggerSOS()">🔊 Start Siren</button>
+<button class="muted" onclick="stopSiren()">Stop Siren</button>
 </div>
 
+<!-- EMERGENCY -->
 <div class="step">
 <h3>Emergency SOS</h3>
 <button class="primary" onclick="triggerSOS()">🚨 Emergency SOS</button>
 </div>
 
+<!-- VOICE -->
 <div class="step">
 <h3>Voice SOS</h3>
 <button class="secondary" onclick="startVoice()">🎙️ Say “HELP”</button>
 </div>
 
-<div class="step">
-<h3>Fake Incoming Call</h3>
-<button class="secondary" onclick="fakeCall()">📞 Fake Call</button>
-</div>
-
-<div class="step">
-<h3>Fake Video Call</h3>
-<button class="secondary" onclick="fakeVideo()">🎥 Start Fake Video</button>
-<video id="camera" autoplay playsinline style="display:none;"></video>
-</div>
-
+<!-- FAKE CHAT -->
 <div class="step">
 <h3>Fake Chat</h3>
-<button class="secondary" onclick="openInfo('chat')">💬 Open Fake Chat</button>
+<button class="secondary" onclick="openChat()">💬 Open Fake Chat</button>
 </div>
-
-<div class="step">
-<h3>Emergency Helplines</h3>
-<a href="tel:112"><button class="primary">🚔 Police 112</button></a><br><br>
-<a href="tel:181"><button class="secondary">👩 Women 181</button></a><br><br>
-<a href="tel:108"><button class="muted">🚑 Ambulance 108</button></a>
-</div>
-
-<div class="step"><button class="secondary" onclick="openInfo('use')">How to use this app</button></div>
-<div class="step"><button class="secondary" onclick="openInfo('safety')">Safety Tips</button></div>
-<div class="step"><button class="secondary" onclick="openInfo('info')">App Information</button></div>
-<div class="step"><button class="secondary" onclick="openInfo('customer')">Customer Issues</button></div>
 
 <footer>Designed and developed by <b>ELITE 7</b></footer>
 </div>
 
-<!-- INFO / CHAT SCREEN -->
-<div id="infoScreen">
-<h2 id="infoTitle"></h2>
-<div id="infoContent"></div>
+<!-- OVERLAY SCREEN -->
+<div id="overlay">
+<h2 id="overlayTitle"></h2>
+<div id="overlayContent"></div>
 <br>
-<button class="primary" onclick="closeInfo()">Back</button>
+<button class="primary" onclick="closeOverlay()">Back</button>
 </div>
 
 <script>
-const CONTACT_KEY="she_shield_contacts";
-let audioCtx, osc, recognition;
+const KEY="she_contacts";
+let audioCtx, oscillator, recognition;
 let lastShake=0;
 
 /* CONTACTS */
 function loadContacts(){
-  const list=JSON.parse(localStorage.getItem(CONTACT_KEY)||"[]");
+  const list=JSON.parse(localStorage.getItem(KEY)||"[]");
   contactList.innerHTML=list.length
     ? list.map(c=>`<small>${c.name} (${c.phone})</small><br>`).join("")
     : "<small>No contacts saved</small>";
 }
-function addContact(){
-  const name=tcName.value.trim();
-  const phone=tcPhone.value.trim();
-  if(!name||!phone) return alert("Enter name and phone");
-  let list=JSON.parse(localStorage.getItem(CONTACT_KEY)||"[]");
-  if(list.length>=5) return alert("Maximum 5 contacts allowed");
-  list.push({name,phone});
-  localStorage.setItem(CONTACT_KEY,JSON.stringify(list));
-  tcName.value=""; tcPhone.value="";
-  loadContacts();
-}
 loadContacts();
 
-/* SOS CORE */
-function triggerSOS(){
-  startSiren();
-  const list=JSON.parse(localStorage.getItem(CONTACT_KEY)||"[]");
-  if(!list.length){alert("Add trusted contacts");return;}
-  navigator.geolocation.getCurrentPosition(p=>{
-    const msg=`DANGER. HELP ME IMMEDIATELY.\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
-    list.forEach(c=>{
-      window.open(`https://wa.me/${c.phone}?text=${encodeURIComponent(msg)}`,"_blank");
-    });
-  });
+function addContact(){
+  let name=cName.value.trim(), phone=cPhone.value.trim();
+  if(!name||!phone){alert("Enter details");return;}
+  let list=JSON.parse(localStorage.getItem(KEY)||"[]");
+  if(list.length>=5){alert("Max 5 contacts");return;}
+  list.push({name,phone});
+  localStorage.setItem(KEY,JSON.stringify(list));
+  cName.value=""; cPhone.value="";
+  loadContacts();
 }
 
 /* SIREN */
 function startSiren(){
   audioCtx=new AudioContext();
-  osc=audioCtx.createOscillator();
-  osc.frequency.value=700;
-  osc.connect(audioCtx.destination);
-  osc.start();
+  oscillator=audioCtx.createOscillator();
+  oscillator.frequency.value=700;
+  oscillator.connect(audioCtx.destination);
+  oscillator.start();
+}
+function stopSiren(){
+  if(oscillator){oscillator.stop(); oscillator=null;}
+}
+
+/* CORE SOS */
+function triggerSOS(){
+  startSiren();
+  let list=JSON.parse(localStorage.getItem(KEY)||"[]");
+  if(!list.length){alert("No trusted contacts");return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    let msg=`DANGER. HELP ME IMMEDIATELY.\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
+    list.forEach(c=>{
+      window.open(`https://wa.me/${c.phone}?text=${encodeURIComponent(msg)}`,"_blank");
+    });
+  });
 }
 
 /* VOICE SOS */
@@ -209,111 +179,58 @@ function startVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   recognition=new SR();
   recognition.onresult=e=>{
-    if(e.results[0][0].transcript.toLowerCase().includes("help"))
+    if(e.results[0][0].transcript.toLowerCase().includes("help")){
       triggerSOS();
+    }
   };
   recognition.start();
 }
 
 /* SHAKE SOS */
 window.addEventListener("devicemotion",e=>{
-  const a=e.accelerationIncludingGravity;
+  let a=e.accelerationIncludingGravity;
   if(!a) return;
-  const g=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
-  const now=Date.now();
+  let g=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+  let now=Date.now();
   if(g>22 && now-lastShake>2000){
     lastShake=now;
     triggerSOS();
   }
 });
 
-/* FAKE CALL */
-function fakeCall(){
-  speechSynthesis.speak(new SpeechSynthesisUtterance(
-    "Where are you? Answer immediately."
-  ));
+/* FAKE CHAT */
+function openChat(){
+  overlay.style.display="block";
+  overlayTitle.innerText="Fake Chat";
+  overlayContent.innerHTML=
+    "<div class='chatBox' id='chatBox'>"+
+    "<div class='msg bot'>Are you safe?</div>"+
+    "<div class='msg bot'>Tell me what is happening.</div>"+
+    "</div>"+
+    "<input id='chatInput' placeholder='Type message'>"+
+    "<button class='secondary' onclick='sendChat()'>Send</button>";
 }
 
-/* FAKE VIDEO */
-function fakeVideo(){
-  camera.style.display="block";
-  navigator.mediaDevices.getUserMedia({video:true})
-    .then(s=>camera.srcObject=s);
-}
-
-/* INFO & CHAT */
-function openInfo(type){
-  infoScreen.style.display="block";
-  if(type==="use"){
-    infoTitle.innerText="How to use this app";
-    infoContent.innerHTML="<ol>"+
-      "<li>Save at least one trusted contact.</li>"+
-      "<li>Use SOS or say HELP in danger.</li>"+
-      "<li>Shake phone to trigger SOS silently.</li>"+
-      "<li>Use fake call or chat to escape.</li>"+
-      "<li>Contact emergency helplines if needed.</li></ol>";
-  }
-  if(type==="safety"){
-    infoTitle.innerText="Women Safety Tips";
-    infoContent.innerHTML="<ol>"+[
-      "Stay alert","Trust instincts","Avoid dark areas","Share location",
-      "Keep phone charged","Learn self-defense","Use loud voice",
-      "Target eyes","Target nose","Target knees","Run when possible",
-      "Carry safety tools","Inform trusted people","Avoid risky lifts",
-      "Walk confidently","Know exits","Avoid distractions",
-      "Use siren","Call help","Defend yourself"
-    ].map(t=>`<li>${t}</li>`).join("")+"</ol>";
-  }
-  if(type==="info"){
-    infoTitle.innerText="App Information";
-    infoContent.innerHTML=
-      "<p><b>Privacy:</b> She-Shield does not store personal data. Location is shared only during SOS.</p>"+
-      "<p><b>Intention:</b> This app is designed to empower women with quick, reliable safety tools during emergencies.</p>";
-  }
-  if(type==="customer"){
-    infoTitle.innerText="Customer Issues";
-    infoContent.innerHTML=
-      "<select>"+
-      "<option>App not working</option>"+
-      "<option>SOS failed</option>"+
-      "<option>Location issue</option>"+
-      "<option>Call issue</option>"+
-      "<option>Video issue</option>"+
-      "<option>Chat issue</option>"+
-      "<option>Other</option>"+
-      "</select>"+
-      "<textarea placeholder='Type your issue here'></textarea>";
-  }
-  if(type==="chat"){
-    infoTitle.innerText="Fake Chat";
-    infoContent.innerHTML=
-      "<div class='chatBox' id='chatBox'>"+
-      "<div class='msg bot'>Are you safe?</div>"+
-      "<div class='msg bot'>Tell me what’s happening.</div></div>"+
-      "<input id='chatInput' placeholder='Type message'>"+
-      "<button class='secondary' onclick='sendChat()'>Send</button>";
-  }
-}
-
-/* CHAT LOGIC */
 function sendChat(){
-  const box=document.getElementById("chatBox");
-  const inp=document.getElementById("chatInput");
-  const text=inp.value.toLowerCase();
+  let box=document.getElementById("chatBox");
+  let inp=document.getElementById("chatInput");
+  let text=inp.value.toLowerCase();
   box.innerHTML+=`<div class='msg user'>${inp.value}</div>`;
-  let reply="I’m listening. Tell me more.";
+
+  let reply="I am listening. Tell me more.";
   if(text.includes("where")) reply="Share your location immediately.";
-  else if(text.includes("help")||text.includes("danger")||text.includes("scared"))
-    reply="I’m alerting emergency services. Stay strong.";
-  else if(text.includes("police")) reply="Police have been informed.";
-  else if(text.includes("ambulance")) reply="Calling an ambulance now.";
-  else if(text.includes("coming")) reply="I’m on the way. Don’t panic.";
+  else if(text.includes("help")||text.includes("danger")) reply="Emergency help is being alerted.";
+  else if(text.includes("police")) reply="Police are being contacted.";
+  else if(text.includes("scared")) reply="Stay strong. You are not alone.";
+
   box.innerHTML+=`<div class='msg bot'>${reply}</div>`;
   inp.value="";
   box.scrollTop=box.scrollHeight;
 }
 
-function closeInfo(){infoScreen.style.display="none";}
+function closeOverlay(){
+  overlay.style.display="none";
+}
 </script>
 
 </body>
