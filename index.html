@@ -193,16 +193,21 @@ function stopSiren(){
   if(osc2){osc2.stop();osc2=null}
 }
 
-/* SOS */
-function triggerSOS(){
+/* COMMON SOS ACTION */
+function sendSOS(){
   startSiren();
   const list=JSON.parse(localStorage.getItem(KEY)||"[]");
-  if(!list.length)return alert("Add trusted contacts");
+  if(!list.length)return alert("Add trusted contacts first");
   navigator.geolocation.getCurrentPosition(p=>{
     const msg=`DANGER. HELP ME IMMEDIATELY.\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
-    list.forEach(c=>window.open(`https://wa.me/${c.phone}?text=${encodeURIComponent(msg)}`,"_blank"));
+    list.forEach(c=>{
+      window.open(`https://wa.me/${c.phone}?text=${encodeURIComponent(msg)}`,"_blank");
+    });
   });
 }
+
+/* EMERGENCY SOS */
+function triggerSOS(){ sendSOS(); }
 
 /* AUTO SOS */
 let autoTimer,count=10;
@@ -212,7 +217,7 @@ function startAutoSOS(){
   autoTimer=setInterval(()=>{
     count--;
     autoStatus.innerHTML="Auto SOS in "+count+" seconds";
-    if(count<=0){clearInterval(autoTimer);triggerSOS()}
+    if(count<=0){clearInterval(autoTimer);sendSOS();}
   },1000);
 }
 function cancelAutoSOS(){
@@ -220,17 +225,30 @@ function cancelAutoSOS(){
   autoStatus.innerHTML="Cancelled";
 }
 
-/* VOICE */
+/* VOICE SOS (NOW WITH SIREN + LOCATION) */
 function startVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   const r=new SR();
   r.onresult=e=>{
     if(e.results[0][0].transcript.toLowerCase().includes("help")){
-      triggerSOS();
+      sendSOS();
     }
   };
   r.start();
 }
+
+/* SHAKE SOS */
+let lastShake=0;
+window.addEventListener("devicemotion",e=>{
+  const a=e.accelerationIncludingGravity;
+  if(!a) return;
+  const force=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+  const now=Date.now();
+  if(force>22 && now-lastShake>3000){
+    lastShake=now;
+    sendSOS();
+  }
+});
 
 /* FAKE CALL */
 const fakeCallLines=[
@@ -285,7 +303,7 @@ function openInfo(type){
   overlay.style.display="block";
   if(type==="use"){
     overlayTitle.innerText="How to Use This App";
-    overlayContent.innerHTML="<ol><li>Add trusted contacts</li><li>Use SOS or voice command</li><li>Auto SOS if unable</li><li>Use fake tools to escape</li><li>Call emergency helplines</li></ol>";
+    overlayContent.innerHTML="<ol><li>Add trusted contacts</li><li>Use SOS / Voice / Shake</li><li>Auto SOS if unable</li><li>Use fake tools to escape</li><li>Call emergency helplines</li></ol>";
   }
   if(type==="safety"){
     overlayTitle.innerText="Self-Defence Tips";
