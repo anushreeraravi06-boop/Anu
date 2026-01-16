@@ -6,17 +6,8 @@
 <title>She-Shield</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f5efe6;
-  color:#3a2c2c
-}
-.container{
-  max-width:420px;
-  margin:auto;
-  padding:16px
-}
+body{margin:0;font-family:Arial,sans-serif;background:#f5efe6;color:#3a2c2c}
+.container{max-width:420px;margin:auto;padding:16px}
 h1{text-align:center;color:#e07a5f}
 .logo{text-align:center;margin-bottom:10px}
 .logo img{width:120px;border-radius:16px}
@@ -56,9 +47,7 @@ footer{text-align:center;font-size:13px;margin:20px 0}
 #enableScreen{
   position:fixed;inset:0;
   background:#000000cc;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:flex;align-items:center;justify-content:center;
   z-index:10000
 }
 #enableBox{
@@ -97,7 +86,7 @@ footer{text-align:center;font-size:13px;margin:20px 0}
 <div id="enableScreen">
   <div id="enableBox">
     <h3>Enable Safety System</h3>
-    <p>This allows location, microphone, motion and siren features.</p>
+    <p>Required for SOS, voice, shake & location.</p>
     <button class="primary" onclick="enableSystem()">Enable</button>
   </div>
 </div>
@@ -162,13 +151,13 @@ footer{text-align:center;font-size:13px;margin:20px 0}
 <div class="card">
 <h3>Emergency Helplines</h3>
 <a href="tel:112"><button class="primary">🚔 Police 112</button></a><br><br>
-<a href="tel:181"><button class="secondary">👩 Women 181</button></a><br><br>
+<a href="tel:181"><button class="secondary">👩 Women Helpline 181</button></a><br><br>
 <a href="tel:108"><button class="muted">🚑 Ambulance 108</button></a>
 </div>
 
 <!-- INFO BUTTONS -->
 <div class="card"><button class="secondary" onclick="openInfo('use')">How to Use App</button></div>
-<div class="card"><button class="secondary" onclick="openInfo('safety')">Self-Defence Tips</button></div>
+<div class="card"><button class="secondary" onclick="openInfo('safety')">Self-Defence & Safety Tips</button></div>
 <div class="card"><button class="secondary" onclick="openInfo('info')">App Information</button></div>
 <div class="card"><button class="secondary" onclick="openInfo('customer')">Customer Issues</button></div>
 
@@ -309,32 +298,12 @@ function sendChatMsg(){
   const i=document.getElementById("chatInput");
   const t=i.value.trim().toLowerCase();
   if(!t) return;
-
   box.innerHTML+=`<div class='msg user'>${i.value}</div>`;
-  let r="";
-
-  if(chatState==="start"){
-    if(t.includes("no")){r="Okay. Are you alone right now?";chatState="alone";}
-    else if(t.includes("yes")){r="Good. Where are you now?";chatState="location";}
-    else if(t.includes("hi")){r="Hey. Are you safe right now?";}
-    else{r="Tell me what’s happening.";}
-  }
-  else if(chatState==="alone"){
-    if(t.includes("yes")){r="Can you tell me your location?";chatState="location";}
-    else if(t.includes("no")){r="Good. Stay with them. Where are you?";chatState="location";}
-    else{r="Please tell me if you are alone.";}
-  }
-  else if(chatState==="location"){
-    r="Okay. Stay there. Help is being arranged.";
-    chatState="help";
-  }
-  else{
-    if(t.includes("police")) r="Police have been informed.";
-    else if(t.includes("following")) r="Move to a public place immediately.";
-    else if(t.includes("scared")) r="I know. Breathe slowly. I’m with you.";
-    else r="Help is on the way. Keep your phone with you.";
-  }
-
+  let r="Help is on the way. Stay calm.";
+  if(t.includes("no")) r="Okay. Are you alone right now?";
+  else if(t.includes("scared")) r="I know. Breathe slowly. I’m here.";
+  else if(t.includes("police")) r="Police have been informed.";
+  else if(t.includes("following")) r="Move to a public place immediately.";
   setTimeout(()=>{box.innerHTML+=`<div class='msg bot'>${r}</div>`;},500);
   i.value=""; box.scrollTop=box.scrollHeight;
 }
@@ -342,63 +311,32 @@ function sendChatMsg(){
 /* INFO */
 function openInfo(type){
   overlay.style.display="block";
-
   if(type==="use"){
     overlayTitle.innerText="How to Use App";
-    overlayContent.innerHTML="<ol><li>Enable safety system</li><li>Add trusted contacts</li><li>Use SOS, Voice or Shake SOS</li><li>Auto SOS triggers if inactive</li><li>Use fake call or chat to escape</li></ol>";
+    overlayContent.innerHTML="<ol><li>Enable safety system</li><li>Add trusted contacts</li><li>Use SOS, Voice or Shake</li><li>Auto SOS if unable</li><li>Use fake call or chat to escape</li></ol>";
   }
-
   if(type==="safety"){
     overlayTitle.innerText="Self-Defence & Safety Tips";
-    overlayContent.innerHTML="<ol>"+
-      "<li>Trust your instincts always.</li>"+
-      "<li>Stay alert to surroundings.</li>"+
-      "<li>Avoid isolated areas.</li>"+
-      "<li>Share your live location.</li>"+
-      "<li>Walk confidently.</li>"+
-      "<li>Use loud voice to attract attention.</li>"+
-      "<li>Aim for eyes during attack.</li>"+
-      "<li>Strike nose to disorient.</li>"+
-      "<li>Hit knees to escape.</li>"+
-      "<li>Run as soon as possible.</li>"+
-      "<li>Keep phone charged.</li>"+
-      "<li>Inform someone of your plans.</li>"+
-      "<li>Avoid headphones at night.</li>"+
-      "<li>Stay in well-lit places.</li>"+
-      "<li>Learn basic self-defence.</li>"+
-      "<li>Know emergency numbers.</li>"+
-      "<li>Carry legal safety tools.</li>"+
-      "<li>Lock doors properly.</li>"+
-      "<li>Report suspicious behaviour.</li>"+
-      "<li>Believe you deserve safety.</li>"+
-      "</ol>";
+    overlayContent.innerHTML="<ol><li>Trust instincts</li><li>Stay alert</li><li>Avoid isolated areas</li><li>Share location</li><li>Walk confidently</li><li>Use loud voice</li><li>Aim eyes</li><li>Aim nose</li><li>Strike knees</li><li>Run safely</li><li>Keep phone charged</li><li>Inform someone</li><li>Avoid distractions</li><li>Stay in groups</li><li>Learn self-defence</li><li>Know exits</li><li>Carry safety tools</li><li>Lock doors</li><li>Report incidents</li><li>You deserve safety</li></ol>";
   }
-
   if(type==="info"){
     overlayTitle.innerText="App Information";
-    overlayContent.innerHTML=
-      "<p><b>Purpose:</b> She-Shield is designed to help women respond quickly during emergencies.</p>"+
-      "<p><b>Privacy:</b> No personal data is stored or sent to servers.</p>"+
-      "<p><b>Permissions:</b> Location, microphone and motion are used only during SOS.</p>"+
-      "<p><b>Reliability:</b> Best performance on real mobile devices.</p>"+
-      "<p><b>Disclaimer:</b> This app assists emergencies but does not replace authorities.</p>";
+    overlayContent.innerHTML="<p><b>Purpose:</b> Fast emergency response for women.</p><p><b>Privacy:</b> No data stored.</p><p><b>Permissions:</b> Used only during SOS.</p><p><b>Reliability:</b> Works on real phones.</p><p><b>Disclaimer:</b> Supports safety, not a replacement for authorities.</p>";
   }
-
   if(type==="customer"){
     overlayTitle.innerText="Customer Issues";
     overlayContent.innerHTML=
-      "<select>"+
-      "<option>SOS not working</option>"+
-      "<option>Location sharing issue</option>"+
-      "<option>Voice SOS problem</option>"+
-      "<option>Shake SOS problem</option>"+
-      "<option>App performance issue</option>"+
-      "<option>Notification issue</option>"+
-      "<option>Other</option>"+
-      "</select>"+
-      "<textarea placeholder='Describe your issue here'></textarea>";
+      "<select><option>SOS not working</option><option>Location issue</option><option>Voice SOS issue</option><option>Shake SOS issue</option><option>Fake call/chat issue</option><option>Performance issue</option><option>Other issue</option></select>"+
+      "<textarea placeholder='Describe your issue'></textarea>"+
+      "<button class='primary' onclick='submitIssue()'>Submit</button>"+
+      "<p id='thanks'></p>";
   }
 }
+
+function submitIssue(){
+  document.getElementById("thanks").innerText="Thank you, we will improve.";
+}
+
 function closeOverlay(){overlay.style.display="none";}
 </script>
 
