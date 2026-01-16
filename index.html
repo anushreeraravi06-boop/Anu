@@ -8,25 +8,21 @@
 <style>
 body{
   margin:0;
-  font-family:Arial, sans-serif;
+  font-family:Arial,sans-serif;
   background:#f5efe6;
   color:#3a2c2c;
 }
-.container{
-  max-width:440px;
-  margin:auto;
-  padding:16px;
-}
+.container{max-width:440px;margin:auto;padding:16px}
 header{text-align:center}
-header img{width:90px;margin-bottom:6px}
-h1{color:#e07a5f;margin:6px 0 16px}
+header img{width:90px}
+h1{color:#e07a5f;margin:8px 0 16px}
 
 .card{
   background:#fffaf3;
   padding:14px;
   border-radius:14px;
   margin-bottom:14px;
-  box-shadow:0 6px 16px rgba(0,0,0,.12);
+  box-shadow:0 6px 16px rgba(0,0,0,.12)
 }
 .card h3{color:#e07a5f;margin-top:0}
 
@@ -38,26 +34,21 @@ button{
   font-size:16px;
   font-weight:bold;
   cursor:pointer;
-  margin-top:6px;
+  margin-top:6px
 }
 .primary{background:#e07a5f;color:#fff}
 .secondary{background:#f4a261;color:#fff}
 .muted{background:#ddd}
 
-input{
+input,select,textarea{
   width:100%;
   padding:10px;
   border-radius:8px;
   border:1px solid #ccc;
-  margin-bottom:6px;
+  margin-bottom:6px
 }
 
-footer{
-  text-align:center;
-  padding:16px;
-  font-size:14px;
-  color:#7a5c3a;
-}
+footer{text-align:center;padding:16px;color:#7a5c3a}
 
 /* Enable */
 #enableScreen{
@@ -66,41 +57,35 @@ footer{
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:9999;
+  z-index:9999
 }
 #enableBox{
   background:#fffaf3;
   padding:20px;
   border-radius:14px;
-  text-align:center;
+  text-align:center
 }
 
-/* Safety Tips Full Screen */
-#tipsScreen{
-  position:fixed;inset:0;
+/* FULL SCREENS */
+.fullscreen{
+  position:fixed;
+  inset:0;
   background:#000;
   color:#fff;
   display:none;
   z-index:10000;
   padding:20px;
-  overflow-y:auto;
+  overflow-y:auto
 }
-#tipsScreen h2{color:#f4a261;text-align:center}
-#closeTips{
+.fullscreen h2{color:#f4a261;text-align:center}
+.closeBtn{
   background:#e07a5f;
   padding:10px;
   border-radius:10px;
   text-align:center;
-  margin-bottom:14px;
+  margin-bottom:14px
 }
-
-/* Status */
-#status{
-  text-align:center;
-  font-weight:bold;
-  margin-top:10px;
-}
-.active{color:red}
+.active{color:red;font-weight:bold}
 </style>
 </head>
 
@@ -115,27 +100,32 @@ footer{
   </div>
 </div>
 
-<!-- SAFETY TIPS -->
-<div id="tipsScreen">
-  <div id="closeTips" onclick="closeTips()">⬅ Close</div>
-  <h2>Safety & Self-Defense Tips</h2>
-  <ol>
-    <li>Stay alert and avoid distractions.</li>
-    <li>Trust instincts immediately.</li>
-    <li>Walk confidently.</li>
-    <li>Avoid isolated areas.</li>
-    <li>Keep phone charged.</li>
-    <li>Target eyes, nose, groin if attacked.</li>
-    <li>Use loud voice.</li>
-    <li>Carry legal safety tools.</li>
-    <li>Share live location.</li>
-    <li>Change routines.</li>
-    <li>Stay near crowds.</li>
-    <li>Lock doors.</li>
-    <li>Learn self-defense basics.</li>
-    <li>Avoid oversharing info.</li>
-    <li>Use She-Shield SOS immediately.</li>
-  </ol>
+<!-- INFO SCREEN -->
+<div id="infoScreen" class="fullscreen">
+  <div class="closeBtn" onclick="closeInfo()">⬅ Close</div>
+  <h2>She-Shield – App Information</h2>
+
+  <h3>Why She-Shield is Different</h3>
+  <ul>
+    <li>Multiple SOS triggers (Button, Shake, Voice, Countdown)</li>
+    <li>Offline SOS fallback</li>
+    <li>Incident logging</li>
+    <li>Designed for panic situations</li>
+  </ul>
+
+  <h3>Privacy & Ethics</h3>
+  <p>
+  No data is stored on external servers.<br>
+  Contacts and logs remain on the user’s device.<br>
+  Location is shared only during emergencies.
+  </p>
+
+  <h3>Impact & Relevance</h3>
+  <p>
+  Immediate alerts reduce response time.<br>
+  Designed for real-world safety scenarios.<br>
+  Focused on prevention and rapid help.
+  </p>
 </div>
 
 <div class="container">
@@ -145,62 +135,39 @@ footer{
   <h1>She-Shield</h1>
 </header>
 
-<!-- HOW TO USE -->
-<div class="card">
-<h3>How to Use She-Shield</h3>
-<ol>
-<li>Enable the safety system</li>
-<li>Save trusted contacts</li>
-<li>Use SOS / Shake / Voice in emergency</li>
-</ol>
-</div>
-
-<!-- SIREN -->
 <div class="card">
 <h3>Siren Alert</h3>
 <button class="primary" onclick="startSiren()">🔊 Start Siren</button>
 <button class="muted" onclick="stopSiren()">Stop Siren</button>
 </div>
 
-<!-- SOS -->
 <div class="card">
 <h3>Emergency SOS</h3>
 <button class="primary" onclick="triggerSOS('Button SOS')">🚨 Emergency SOS</button>
 <div id="status">Status: Ready</div>
 </div>
 
-<!-- COUNTDOWN -->
 <div class="card">
 <h3>Auto SOS Countdown</h3>
 <button class="secondary" onclick="startCountdown()">⏳ Start 10s Countdown</button>
 <p id="countText">Not started</p>
 </div>
 
-<!-- VOICE -->
 <div class="card">
 <h3>Voice SOS</h3>
 <button class="secondary" onclick="startVoice()">🎙️ Say “HELP”</button>
 </div>
 
-<!-- FAKE CALL -->
 <div class="card">
 <h3>Fake Incoming Call</h3>
 <button class="secondary" onclick="fakeCall()">📞 Fake Call</button>
 </div>
 
-<!-- LOCATION -->
 <div class="card">
 <h3>Live Location</h3>
 <button class="secondary" onclick="shareLocation()">📍 Share Location</button>
 </div>
 
-<!-- SAFETY TIPS -->
-<div class="card">
-<h3>Safety Guidance</h3>
-<button class="muted" onclick="openTips()">🛡️ View Safety Tips</button>
-</div>
-
-<!-- CONTACTS -->
 <div class="card">
 <h3>Trusted Contacts</h3>
 <input id="c1" placeholder="Contact 1">
@@ -212,34 +179,25 @@ footer{
 <div id="savedContacts"></div>
 </div>
 
-<!-- USP -->
+<!-- CUSTOMER SERVICE -->
 <div class="card">
-<h3>Why She-Shield is Different</h3>
-<ul>
-<li>Multi-trigger SOS</li>
-<li>Offline SOS fallback</li>
-<li>Incident logging</li>
-<li>User-centric design</li>
-</ul>
+<h3>Customer Service</h3>
+<select id="issue">
+  <option value="">Select an issue</option>
+  <option>SOS not working</option>
+  <option>Siren sound issue</option>
+  <option>Location not shared</option>
+  <option>Voice SOS not detecting</option>
+  <option>Other</option>
+</select>
+<textarea id="issueText" placeholder="Describe your issue (optional)"></textarea>
+<button class="muted" onclick="submitIssue()">Submit Issue</button>
+<p id="supportStatus"></p>
 </div>
 
-<!-- PRIVACY -->
+<!-- INFO BUTTON -->
 <div class="card">
-<h3>Privacy & Ethics</h3>
-<p>
-No data stored on servers.  
-Contacts and logs remain on the user’s device.  
-Location shared only during emergencies.
-</p>
-</div>
-
-<!-- IMPACT -->
-<div class="card">
-<h3>Impact & Relevance</h3>
-<p>
-Quick emergency alerts significantly reduce response time.  
-Designed for real-world safety scenarios.
-</p>
+<button class="muted" onclick="openInfo()">ℹ️ App Information</button>
 </div>
 
 <!-- HELPLINES -->
@@ -251,7 +209,7 @@ Designed for real-world safety scenarios.
 </div>
 
 <footer>
-Designed and Developed by <strong>Elite 7</strong>
+Designed and Developed by <b>Elite 7</b>
 </footer>
 
 </div>
@@ -272,14 +230,14 @@ function startSiren(){
   stopSiren();
   osc1=audioCtx.createOscillator();
   osc2=audioCtx.createOscillator();
+  osc1.type=osc2.type="square";
   osc1.frequency.value=900;
   osc2.frequency.value=1400;
-  osc1.type=osc2.type="square";
   osc1.connect(audioCtx.destination);
   osc2.connect(audioCtx.destination);
-  osc1.start(); osc2.start();
+  osc1.start();osc2.start();
 }
-function stopSiren(){ if(osc1)osc1.stop(); if(osc2)osc2.stop(); }
+function stopSiren(){if(osc1)osc1.stop();if(osc2)osc2.stop();}
 
 /* CONTACTS */
 function saveContacts(){
@@ -292,29 +250,20 @@ function loadContacts(){
   savedContacts.innerText=arr.length?"Saved: "+arr.join(", "):"No contacts saved";
 }
 
-/* INCIDENT + OFFLINE SOS */
-function sendSOS(trigger){
-  const arr=JSON.parse(localStorage.getItem("contacts")||"[]");
-  if(!arr.length)return;
-  if(!navigator.onLine){
-    localStorage.setItem("pending_sos",trigger);
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(p=>{
-    const msg=`HELP!\n${trigger}\nLocation: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
-    arr.forEach(n=>window.open(`https://wa.me/${n}?text=${encodeURIComponent(msg)}`));
-  });
-}
-window.addEventListener("online",()=>{
-  const t=localStorage.getItem("pending_sos");
-  if(t){localStorage.removeItem("pending_sos");sendSOS(t);}
-});
-
+/* SOS */
 function triggerSOS(type){
   startSiren();
-  status.innerText="Status: SOS ACTIVE";
+  status.innerHTML="Status: SOS ACTIVE";
   status.className="active";
   sendSOS(type);
+}
+function sendSOS(type){
+  const arr=JSON.parse(localStorage.getItem("contacts")||"[]");
+  if(!arr.length)return;
+  navigator.geolocation.getCurrentPosition(p=>{
+    const msg=`HELP!\n${type}\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
+    arr.forEach(n=>window.open(`https://wa.me/${n}?text=${encodeURIComponent(msg)}`));
+  });
 }
 
 /* COUNTDOWN */
@@ -331,15 +280,20 @@ function startCountdown(){
 function startVoice(){
   const SR=window.SpeechRecognition||webkitSpeechRecognition;
   const r=new SR();
-  r.onresult=e=>{ if(e.results[0][0].transcript.toLowerCase().includes("help")) triggerSOS("Voice SOS"); };
+  r.onresult=e=>{
+    if(e.results[0][0].transcript.toLowerCase().includes("help"))
+      triggerSOS("Voice SOS");
+  };
   r.start();
 }
 
 /* FAKE CALL */
 function fakeCall(){
-  speechSynthesis.speak(new SpeechSynthesisUtterance(
-    "Hello, where are you? Ministers and officials are waiting. Come immediately. Bye."
-  ));
+  speechSynthesis.speak(
+    new SpeechSynthesisUtterance(
+      "Hello, where are you? Ministers and senior officials are waiting. Come immediately. Bye."
+    )
+  );
 }
 
 /* SHAKE */
@@ -348,7 +302,8 @@ function initShake(){
   window.addEventListener("devicemotion",e=>{
     const a=e.accelerationIncludingGravity;
     if(Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z)>22 && Date.now()-last>2000){
-      last=Date.now(); triggerSOS("Shake SOS");
+      last=Date.now();
+      triggerSOS("Shake SOS");
     }
   });
 }
@@ -360,9 +315,15 @@ function shareLocation(){
   });
 }
 
-/* TIPS */
-function openTips(){tipsScreen.style.display="block";}
-function closeTips(){tipsScreen.style.display="none";}
+/* INFO */
+function openInfo(){infoScreen.style.display="block";}
+function closeInfo(){infoScreen.style.display="none";}
+
+/* SUPPORT */
+function submitIssue(){
+  supportStatus.innerText="Thank you. Our team will review your issue.";
+  issue.value=""; issueText.value="";
+}
 </script>
 
 </body>
